@@ -1,0 +1,5 @@
+node_modules
+core/open/*
+composer.lock
+.idea/
+

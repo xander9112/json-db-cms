@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html ng-app="Application">
+<head>
+	<title>{{ 'title'|trans() }}</title>
+	<base href="/">
+	<link rel="stylesheet" href="{{ app.asset_path }}/css/style.css"/>
+</head>
+<body class="js-application" ng-controller="MainController">
+<header>
+	<div class="ui fixed inverted menu">
+		<div class="ui container">
+			<a href="/" class="header item">
+				<img class="logo" src="site/assets/images/logo_white.png">
+				JsonDB - admin
+			</a>
+			<a href="/tables" class="item">Таблицы</a>
+			<!--<div class="ui simple dropdown item">
+				Таблицы <i class="dropdown icon"></i>
+
+				<div class="menu">
+					<a class="item" href="/admin/views/Table.php?table=<?= $table; ?>"><?= $table; ?></a>
+				</div>
+			</div>-->
+		</div>
+		<div class="right menu">
+			<a href="/" target="_blank" class="ui item">
+				На сайт
+			</a>
+			<a class="ui item">
+				Logout
+			</a>
+		</div>
+	</div>
+</header>
+<div class="g-messages"></div>
+<main role="main">
+	<div class="ui grid">
+		<div class="four wide column">
+
+			<div class="ui vertical menu">
+				<a class="active teal item">
+					Inbox
+					<div class="ui teal pointing left label">1</div>
+				</a>
+				<a class="item">
+					Spam
+					<div class="ui label">51</div>
+				</a>
+				<a class="item">
+					Updates
+					<div class="ui label">1</div>
+				</a>
+
+				<div class="item">
+					<div class="ui transparent icon input">
+						<input type="text" placeholder="Search mail...">
+						<i class="search icon"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="ui vertical divider"></div>
+		<div class="twelve wide column">
+			{% block body %}
+			{% endblock %}
+		</div>
+	</div>
+</main>
+<footer>
+
+</footer>
+<script type="text/javascript" src="{{ app.asset_path }}/js/vendor.js"></script>
+<script type="text/javascript" src="{{ app.asset_path }}/js/app.js"></script>
+</body>
+</html>
