@@ -1,17 +1,23 @@
 var Router = function ($routeProvider, $locationProvider) {
 	"use strict";
 	$routeProvider
-		.when('/', {
+		.when('/admin', {
 			templateUrl: 'core/views/MainPage.html'
 		})
-		.when('/:tables', {
-			templateUrl: 'core/views/Tables.html',
-			controller:  'TablesController'
-		}).when('/:tables/:table', {
-			templateUrl: 'views/Table.html',
-			controller:  'TableController'
-		}).otherwise({
-			templateUrl: 'views/ErrorPage.html'
+		.when('/admin/tables', {
+			templateUrl: 'core/views/Table/Tables.html',
+			controller: 'TablesController'
+		})
+		.when('/admin/tables/:table', {
+			templateUrl: 'views/Table/Table.html',
+			controller: 'TableController'
+		})
+		.when('/admin/tables/:table/config', {
+			templateUrl: 'views/Table/config.html',
+			controller: 'TableController'
+		})
+		.otherwise({
+			templateUrl: 'core/views/ErrorPage.html'
 		});
 
 	$locationProvider.html5Mode(true);

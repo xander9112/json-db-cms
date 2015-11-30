@@ -4,7 +4,7 @@ var JsonDB = function JsonDB($resource) {
 	"use strict";
 
 	return {
-		tables: $resource('/tables/get_tables'),
+		tables: $resource('/admin/tables'),
 		createTable: $resource('core/TableCreate.php'),
 		table: $resource('core/Table.php'),
 		saveTable: $resource('core/TableSave.php')
@@ -315,16 +315,19 @@ var TablesController = function TablesController($scope, $routeParams, JsonDB) {
 
 var Router = function Router($routeProvider, $locationProvider) {
 	"use strict";
-	$routeProvider.when('/', {
+	$routeProvider.when('/admin', {
 		templateUrl: 'core/views/MainPage.html'
-	}).when('/:tables', {
-		templateUrl: 'core/views/Tables.html',
+	}).when('/admin/tables', {
+		templateUrl: 'core/views/Table/Tables.html',
 		controller: 'TablesController'
-	}).when('/:tables/:table', {
-		templateUrl: 'views/Table.html',
+	}).when('/admin/tables/:table', {
+		templateUrl: 'views/Table/Table.html',
+		controller: 'TableController'
+	}).when('/admin/tables/:table/config', {
+		templateUrl: 'views/Table/config.html',
 		controller: 'TableController'
 	}).otherwise({
-		templateUrl: 'views/ErrorPage.html'
+		templateUrl: 'core/views/ErrorPage.html'
 	});
 
 	$locationProvider.html5Mode(true);

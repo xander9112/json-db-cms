@@ -13,37 +13,39 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Controller
 {
-	/**
-	 * @var Application
-	 */
-	protected $app;
+    /**
+     * @var Application
+     */
+    protected $app;
 
-	/**
-	 * @var Request
-	 */
-	protected $request;
+    /**
+     * @var Request
+     */
+    protected $request;
 
-	public function __construct(Application $app)
-	{
-		$this->app = $app;
-		$this->request = $app['request'];
-		/*echo "<pre>";
-		var_dump($this->request->attributes);
-		echo "</pre>";
-		die;*/
-	}
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+        $this->request = $app['request'];
+    }
 
-	/**
-	 * Render to response twig views.
-	 *
-	 * @param          $view
-	 * @param array    $parameters
-	 * @param Response $response
-	 *
-	 * @return Response
-	 */
-	protected function render($view, array $parameters = array(), Response $response = null)
-	{
-		return $this->app->render($view, $parameters, $response);
-	}
+    /**
+     * Render to response twig views.
+     *
+     * @param          $view
+     * @param array $parameters
+     * @param Response $response
+     *
+     * @return Response
+     */
+
+    protected function render($view, array $parameters = array(), Response $response = null)
+    {
+        return $this->app->render($view, $parameters, $response);
+    }
+
+    protected function YamlDir()
+    {
+        return $this->app['YamlDir'];
+    }
 }

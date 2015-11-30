@@ -7,7 +7,7 @@ $app['locale'] = 'en';
 $app->register(new Silicone\Provider\RouterServiceProvider());
 
 $app['router.resource'] = array(
-	$app->getRootDir() . '/src/Controller/',
+    $app->getRootDir() . '/src/Controller/',
 );
 
 $app['router.cache_dir'] = $app->getCacheDir();
@@ -17,12 +17,12 @@ $app['asset_path'] = '/core/site/assets';
 
 // Http Cache
 $app->register(new Silex\Provider\HttpCacheServiceProvider(), array(
-	'http_cache.cache_dir' => $app->getCacheDir() . '/http/',
+    'http_cache.cache_dir' => $app->getCacheDir() . '/http/',
 ));
 
 // Controllers
 $app['resolver'] = $app->share(function () use ($app) {
-	return new Silicone\Controller\ControllerResolver($app, $app['logger']);
+    return new Silicone\Controller\ControllerResolver($app, $app['logger']);
 });
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 
@@ -32,26 +32,29 @@ $app->register(new Silicone\Provider\DoctrineCommonServiceProvider());
 // Doctrine ORM
 $app->register(new Silicone\Provider\DoctrineOrmServiceProvider());
 $app['doctrine.options'] = array(
-	'debug' => $app['debug'],
-	'proxy_namespace' => 'Proxy',
-	'proxy_dir' => $app->getCacheDir() . '/proxy/',
+    'debug' => $app['debug'],
+    'proxy_namespace' => 'Proxy',
+    'proxy_dir' => $app->getCacheDir() . '/proxy/',
 );
 
 $app['dbAdmin'] = array(
-	'login' => 'admin',
-	'password' => 'admin',
+    'login' => 'admin',
+    'password' => 'admin',
 );
 
+$app['YamlDir'] = $app->getRootDir() . '/YamlDir/';
+$app['jsonDBPath'] = '/data/jsonTables/';
+
 $app['doctrine.connection'] = array(
-	'driver' => 'pdo_mysql',
-	'dbname' => 'silex',
-	'user' => 'root',
-	'password' => '',
-	'host' => 'localhost',
+    'driver' => 'pdo_mysql',
+    'dbname' => 'silex',
+    'user' => 'root',
+    'password' => '',
+    'host' => 'localhost',
 );
 
 $app['doctrine.paths'] = array(
-	$app->getRootDir() . '/src/Entity/',
+    $app->getRootDir() . '/src/Entity/',
 );
 
 // Monolog
@@ -61,18 +64,18 @@ $app['monolog.name'] = 'Silicone';
 
 // Session
 $app->register(new Silex\Provider\SessionServiceProvider(), array(
-	'session.storage.options' => array(
-		'name' => 'Silicone',
-	)
+    'session.storage.options' => array(
+        'name' => 'Silicone',
+    )
 ));
 
 // Twig
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
-	'twig.options' => array(
-		'cache' => $app->getCacheDir() . '/twig/',
-		'auto_reload' => true,
-	),
-	'twig.path' => $app->getRootDir() . '/views/',
+    'twig.options' => array(
+        'cache' => $app->getCacheDir() . '/twig/',
+        'auto_reload' => true,
+    ),
+    'twig.path' => $app->getRootDir() . '/views/',
 ));
 $app->register(new Silicone\Provider\TwigServiceProviderExtension());
 
@@ -84,7 +87,7 @@ $app['translator.resource'] = $app->getRootDir() . '/lang/';
 $app->register(new Silex\Provider\ValidatorServiceProvider());
 $app->register(new Silicone\Provider\ValidatorServiceProviderExtension());
 $app['validator.unique'] = function () use ($app) {
-	return new Validator\UniqueValidator($app['em']);
+    return new Validator\UniqueValidator($app['em']);
 };
 
 // Form
@@ -92,36 +95,37 @@ $app->register(new Silex\Provider\FormServiceProvider());
 
 // Security
 $app['security.user_class'] = 'Entity\User';
+
 $app->register(new Silex\Provider\SecurityServiceProvider(), array(
-	'security.firewalls' => array(
-		'default' => array(
-			'pattern' => '^/',
-			'anonymous' => true,
-			'form' => array(
-				'login_path' => '/login',
-				'check_path' => '/login_check'
-			),
-			'logout' => array(
-				'logout_path' => '/logout'
-			),
-			'users' => $app->share(function () use ($app) {
-				return new Security\UserProvider($app['em']->getRepository($app['security.user_class']));
-			}),
-			'remember_me' => array(
-				'key' => 'remember_me',
-				'lifetime' => 31536000, # 365 days in seconds
-				'path' => '/',
-				'name' => 'REMEMBER_ME',
-			),
-		),
-	),
-	'security.role_hierarchy' => array(
-		'ROLE_USER' => array('ROLE_GUEST'),
-		'ROLE_ADMIN' => array('ROLE_USER'),
-	),
-	'security.access_rules' => array(
-		array('^/', 'IS_AUTHENTICATED_ANONYMOUSLY'),
-	)
+    'security.firewalls' => array(
+        'default' => array(
+            'pattern' => '^/',
+            'anonymous' => true,
+            'form' => array(
+                'login_path' => '/login',
+                'check_path' => '/login_check'
+            ),
+            'logout' => array(
+                'logout_path' => '/logout'
+            ),
+            'users' => $app->share(function () use ($app) {
+                return new Security\UserProvider($app['em']->getRepository($app['security.user_class']));
+            }),
+            'remember_me' => array(
+                'key' => 'remember_me',
+                'lifetime' => 31536000, # 365 days in seconds
+                'path' => '/',
+                'name' => 'REMEMBER_ME',
+            ),
+        ),
+    ),
+    'security.role_hierarchy' => array(
+        'ROLE_USER' => array('ROLE_GUEST'),
+        'ROLE_ADMIN' => array('ROLE_USER'),
+    ),
+    'security.access_rules' => array(
+        array('^/', 'IS_AUTHENTICATED_ANONYMOUSLY'),
+    )
 ));
 $app->register(new Silex\Provider\RememberMeServiceProvider());
 $r = new \ReflectionClass('Symfony\Component\Security\Core\SecurityContext');

@@ -1,33 +1,49 @@
 <?php
 namespace Controller;
 
+use Component\JsonDB;
+use Symfony\Component\Yaml\Yaml;
 use Silicone\Route;
 use Silicone\Controller;
+use Entity\JsonTable;
 
 class Tables extends Controller
 {
-	/**
-	 * @Route("/tables", name="tables")
-	 */
+    /**
+     * @Route("/admin/tables")
+     */
 
-	public function tables()
-	{
+    public function tables()
+    {
 
-		/*if ($this->request->isMethod('POST')) {
+        if (0 === strpos($this->request->headers->get('Accept'), 'application/json')) {
+            var_dump('fasfsa');
+        } else {
+//        $jsonDB = new JsonDB($this->app['jsonDBPath']);
 
-			return;
-		}*/
+            /* $array = Yaml::parse(file_get_contents($this->YamlDir() . 'table.yaml'));
 
-		return $this->render('index.twig', array(
-			'name' => 'Таблицы'
-		));
-	}
+             print Yaml::dump($array);*/
 
-	public function tablesGet()
-	{
-		if ($this->request->isMethod('GET')) {
-			echo "Tables";
-			return;
-		}
-	}
+            /*if ($this->request->isMethod('POST')) {
+
+                return;
+            }*/
+
+            return $this->render('index.twig', array(
+                'name' => 'Таблицы'
+            ));
+        }
+    }
+
+    /**
+     * @Route("/admin/tables/{table}")
+     */
+    public function table($table)
+    {
+        var_dump($table);
+        return $this->render('index.twig', array(
+            'name' => $table
+        ));
+    }
 }
