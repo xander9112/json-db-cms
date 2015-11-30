@@ -316,9 +316,9 @@ var TablesController = function TablesController($scope, $routeParams, JsonDB) {
 var Router = function Router($routeProvider, $locationProvider) {
 	"use strict";
 	$routeProvider.when('/', {
-		templateUrl: 'app/views/MainPage.html'
+		templateUrl: 'core/views/MainPage.html'
 	}).when('/:tables', {
-		templateUrl: 'app/views/Tables.html',
+		templateUrl: 'core/views/Tables.html',
 		controller: 'TablesController'
 	}).when('/:tables/:table', {
 		templateUrl: 'views/Table.html',
