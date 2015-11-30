@@ -13,7 +13,7 @@ $app['router.resource'] = array(
 $app['router.cache_dir'] = $app->getCacheDir();
 
 // Assets
-$app['asset_path'] = '/site/assets';
+$app['asset_path'] = '/core/site/assets';
 
 // Http Cache
 $app->register(new Silex\Provider\HttpCacheServiceProvider(), array(
