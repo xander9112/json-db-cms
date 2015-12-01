@@ -1,0 +1,16 @@
+"_id": String
+"index": Integer
+"isActive": Boolean
+"picture": Url
+"age": Integer
+"eyeColor": String
+"firstName": String
+"lastName": String
+"company": String
+"email": String
+"phone": String
+"address": String
+"about": Text
+"registered": Date
+"latitude": String
+"longitude": String

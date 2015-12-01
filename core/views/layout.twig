@@ -38,25 +38,21 @@
 <main role="main">
     <div class="ui grid">
         <div class="four wide column">
+            <h2 class="ui center aligned icon header">
+                <i class="circular table icon"></i>
+                Таблицы
+            </h2>
 
-            <div class="ui vertical menu">
-                <a class="active teal item">
-                    Inbox
-                    <div class="ui teal pointing left label">1</div>
-                </a>
-                <a class="item">
-                    Spam
-                    <div class="ui label">51</div>
-                </a>
-                <a class="item">
-                    Updates
-                    <div class="ui label">1</div>
-                </a>
+            <div class="ui celled list" ng-controller="TablesController">
+                <div class="item" ng-repeat="table in tables">
+                    <i class="table icon"></i>
 
-                <div class="item">
-                    <div class="ui transparent icon input">
-                        <input type="text" placeholder="Search mail...">
-                        <i class="search icon"></i>
+                    <div class="content">
+                        <div class="header">
+                            <a href="/admin/tables/[[ table ]]">
+                                [[ table ]]
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

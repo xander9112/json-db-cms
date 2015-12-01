@@ -1,0 +1,35 @@
+<!--<my-compiller directive="directives['Integer']"></my-compiller>-->
+<div class="horizontal-scroll">
+	<table class="ui very compact celled table">
+		<thead>
+		<tr>
+			<th ng-repeat="key in keys">
+				[[key]]
+			</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr ng-repeat="row in table">
+			<td ng-repeat="col in row">
+				<my-compiller directive="directives['[[ col.fieldType ]]']" value="[[col.value]]"></my-compiller>
+			</td>
+		</tr>
+		</tbody>
+		<tfoot class="full-width">
+		<tr>
+			<th></th>
+			<th colspan="4">
+				<div class="ui right floated small primary labeled icon button" ng-click="save()">
+					<i class="user icon"></i> Add User
+				</div>
+				<div class="ui small button">
+					Approve
+				</div>
+				<div class="ui small  disabled button">
+					Approve All
+				</div>
+			</th>
+		</tr>
+		</tfoot>
+	</table>
+</div>

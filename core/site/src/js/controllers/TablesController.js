@@ -1,12 +1,11 @@
 var TablesController = function ($scope, $routeParams, JsonDB) {
 
-	$scope.tables = JsonDB.tables.get({}, true);
-
+	$scope.tables = JsonDB.tables.query();
 	$scope.addTable = function () {
 		"use strict";
 		var newTableName = $scope.newTableName;
 
-		var newDb = new JsonDB.createTable({ createTable: newTableName });
+		var newDb = new JsonDB.createTable({createTable: newTableName});
 		newDb.$save();
 
 		$scope.tables.push(newTableName);

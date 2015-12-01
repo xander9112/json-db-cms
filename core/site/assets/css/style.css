@@ -27913,5 +27913,8 @@ html.ios body {
 *******************************/
 
 main {
-  margin-top: 60px;
+  margin-top: 20px;
+}
+.horizontal-scroll {
+  overflow-x: visible;
 }

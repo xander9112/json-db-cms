@@ -5,9 +5,9 @@ var JsonDB = function JsonDB($resource) {
 
 	return {
 		tables: $resource('/admin/tables'),
-		createTable: $resource('core/TableCreate.php'),
-		table: $resource('core/Table.php'),
-		saveTable: $resource('core/TableSave.php')
+		createTable: $resource('/admin/tables'),
+		table: $resource('/admin/tables/:table'),
+		saveTable: $resource('/admin/tables')
 	};
 };
 'use strict';
@@ -75,52 +75,92 @@ Components.Semantic.DeleteButton = function () {
 		template: '<button class="ui button" ng-click="action()"><i class="remove icon"></i> {{text}}</button>'
 	};
 };
-"use strict";
+'use strict';
 
 var FieldTypes = FieldTypes || {};
-
-var templates = function templates(modelName) {
-	"use strict";
-	console.log(modelName);
-	return {
-		Integer: "<input type=\"text\" ng-model=\"" + modelName + "\" />",
-		Text: "<textarea ng-model=\"modelName\"></textarea>"
-
-	};
-};
 
 FieldTypes.IntegerDir = function () {
 	"use strict";
 
+	var template = '\n\t\t\t<div class="ui input">\n\t\t\t\t<input type="text" ng-model="value" placeholder="Search...">\n\t\t\t</div>\n\t\t';
 	return {
-		// обязательно, для поддержки работы через элемент
 		restrict: 'E',
-
-		// заменить <photo> этим html
-		template: '<div></div>',
 		replace: true,
-		transclude: true,
+		template: template,
 		scope: {
-			type: '@',
-			value: '@'
+			'value': '='
+		}
+	};
+};
+
+FieldTypes.StringDir = function () {
+	"use strict";
+
+	var template = '\n\t\t<div class="ui input">\n\t\t\t<input type="text" ng-model="value" placeholder="">\n\t\t</div>\n\t\t\t';
+	return {
+		restrict: 'E',
+		replace: true,
+		template: template,
+		scope: {
+			'value': '='
+		}
+	};
+};
+
+FieldTypes.BooleanDir = function () {
+	"use strict";
+
+	var template = '\n\t<div class="ui form">\n\t\t<div class="inline field">\n\t\t\t<div class="ui toggle checkbox">\n\t\t\t\t<input type="checkbox" ng-model="value" tabindex="0" class="hidden">\n\t\t\t\t<label></label>\n\t\t\t</div>\n\t\t</div>\n\t</div>';
+	return {
+		restrict: 'E',
+		template: template,
+		replace: true,
+		scope: {
+			'value': '='
 		},
+		link: function link(scope, iElement, iAttrs) {
+			$('.ui.checkbox').checkbox();
+		}
+	};
+};
 
-		// наблюдение и манипулирование DOM
-		link: function link($scope, element, attrs) {
-			//console.log(attrs.type);
+FieldTypes.UrlDir = function () {
+	"use strict";
 
-			$(element).append("<input type=\"text\" ng-model=\"value\" />");
+	var template = '\n\t\t<div class="ui input">\n\t\t\t<input type="text" ng-model="value" placeholder="">\n\t\t</div>\n\t\t\t';
+	return {
+		restrict: 'E',
+		template: template,
+		replace: true,
+		scope: {
+			'value': '='
+		}
+	};
+};
 
-			/*attrs.$observe('type', function (value) {
-   	/!*element.append()*!/
-   	//console.log(value);
-   	//
-   });*/
+FieldTypes.TextDir = function () {
+	"use strict";
 
-			/*// атрибуты именуются с применением «верблюжьей» нотации
-    attrs.$observe('photoSrc', function (value) {
-    element.find('img').attr('src', value)
-    })*/
+	var template = '\n\t\t<div class="ui form">\n\t\t\t<div class="inline field">\n\t\t\t\t<label>Short Text</label>\n\t\t\t\t<textarea rows="2" ng-model="value"></textarea>\n\t\t\t</div>\n\t\t</div>\n\t';
+	return {
+		restrict: 'E',
+		template: template,
+		replace: true,
+		scope: {
+			'value': '='
+		}
+	};
+};
+
+FieldTypes.DateDir = function () {
+	"use strict";
+
+	var template = '\n\t\t<div class="ui input">\n\t\t\t<input type="text" ng-model="value" placeholder="">\n\t\t</div>\n\t\t\t';
+	return {
+		restrict: 'E',
+		template: template,
+		scope: {
+			'value': '='
 		}
 	};
 };
@@ -190,109 +230,152 @@ Tekpub.Bootstrap.BreadCrumbs = function ($routeParams) {
 	}
 };
 */
-"use strict";
+'use strict';
 
 var MainController = function MainController($scope, $routeParams, JsonDB) {
 	"use strict";
+
+	var directives = {
+		Integer: {
+			template: '<integer-dir value="value"/>'
+		},
+		String: {
+			template: '<string-dir value="value"/>'
+
+		},
+		Boolean: {
+			template: '<boolean-dir value="value"/>'
+		},
+		Url: {
+			template: '<url-dir value="value"/>'
+		},
+		Text: {
+			template: '<text-dir value="value"/>'
+		},
+		Date: {
+			template: '<date-dir value="value"/>'
+		}
+	};
+
+	/*var directives = [
+  {
+  template: '<integer-dir data="data"/>',
+  data: {
+  value: 'qwerty'
+  }
+  }, {
+  template: '<directive-two data="data"/>',
+  data: {
+  message: true
+  }
+  }, {
+  template: '<directive-thr data="data"/>',
+  data: {
+  message: 126
+  }
+  }
+  ];*/
+	$scope.directives = directives;
 };
-"use strict";
+'use strict';
 
 var TableController = function TableController($scope, $routeParams, JsonDB) {
 	$scope.tableName = $routeParams.table;
 
-	var table = JsonDB.table.query({ tableName: $scope.tableName }, true, function (data) {
+	var table = JsonDB.table.get({ table: $scope.tableName }, function (data) {
 		"use strict";
-		$scope.data = data;
-		$scope.table = [];
-		$scope.keyLength = _.size(data[0]) + 1;
 
-		_.each($scope.data, function (key, value, index) {
-			var obj = {};
-			var array = [];
-			$scope.array = [];
-			//$scope.table.push([]);
+		var config = table.config;
+		$scope.table = table.table;
 
-			_.each(key, function (object, key) {
-				$scope.array.push({
-					key: key,
-					value: object.value,
-					fieldType: object.fieldType
-				});
-			});
-
-			$scope.table.push($scope.array);
+		$scope.keys = [];
+		_.each(config, function (value, key) {
+			$scope.keys.push(key);
 		});
 
-		$scope.keys = $scope.table[0];
+		angular.element('.horizontal-scroll').niceScroll({
+			cursorcolor: '#0c64d4',
+			cursoropacitymin: 1,
+			cursorwidth: 10,
+			cursorborder: 'none',
+			cursorborderradius: 0,
+			cursorfixedheight: 90
+		});
 	});
 
-	$scope.showSettings = function (event) {
+	$scope.save = function () {
 		"use strict";
-		event.preventDefault();
-
-		$('.ui.modal').modal('show');
+		console.log($scope.table);
 	};
 
-	$scope.removeItem = function (event, tr) {
-		"use strict";
-
-		event.preventDefault();
-		$scope.table.splice($scope.table.indexOf(tr), 1);
-	};
-
-	$scope.addItem = function (event, tr) {
-		"use strict";
-		event.preventDefault();
-		var newTr = [];
-
-		_.each($scope.table[0], function (value, key) {
-			newTr.push({
-				key: value.key,
-				value: '',
-				fieldType: value.fieldType
-			});
-		});
-
-		$scope.table.push(newTr);
-	};
-
-	$scope.saveTable = function (event) {
-		"use strict";
-		event.preventDefault();
-
-		var tableToServer = [];
-
-		_.each($scope.table, function (value, key, index) {
-			var obj = {};
-
-			_.each(value, function (value, key) {
-				obj[value.key] = {
-					value: value.value,
-					fieldType: value.fieldType
-				};
-			});
-
-			tableToServer.push(obj);
-		});
-
-		var table = new JsonDB.saveTable({
-			tableName: $scope.tableName,
-			data: tableToServer
-		});
-
-		table.$save(function (u, putResponseHeaders) {
-			if (u.success) {
-				alert('Успешно сохранено');
-			}
-		});
-	};
+	/*$scope.showSettings = function (event) {
+  "use strict";
+  event.preventDefault();
+ 
+  $('.ui.modal')
+  .modal('show')
+  ;
+  };
+ 
+  $scope.removeItem = function (event, tr) {
+  "use strict";
+ 
+  event.preventDefault();
+  $scope.table.splice($scope.table.indexOf(tr), 1);
+  };
+ 
+  $scope.addItem = function (event, tr) {
+  "use strict";
+  event.preventDefault();
+  var newTr = [];
+ 
+  _.each($scope.table[0], function (value, key) {
+  newTr.push({
+  key: value.key,
+  value: '',
+  fieldType: value.fieldType
+  })
+  });
+ 
+  $scope.table.push(newTr);
+  };
+ 
+  $scope.saveTable = function (event) {
+  "use strict";
+  event.preventDefault();
+ 
+  var tableToServer = [];
+ 
+  _.each($scope.table, function (value, key, index) {
+  var obj = {};
+ 
+  _.each(value, function (value, key) {
+  obj[value.key] = {
+  value: value.value,
+  fieldType: value.fieldType
+  }
+  });
+ 
+  tableToServer.push(obj);
+  });
+ 
+  var table = new JsonDB.saveTable({
+  tableName: $scope.tableName,
+  data: tableToServer
+  });
+ 
+  table.$save(function (u, putResponseHeaders) {
+  if (u.success) {
+  alert('Успешно сохранено')
+  }
+  })
+  };*/
 };
 "use strict";
 
 var TablesController = function TablesController($scope, $routeParams, JsonDB) {
 
-	$scope.tables = JsonDB.tables.get({}, true);
-
+	$scope.tables = JsonDB.tables.query();
 	$scope.addTable = function () {
 		"use strict";
 		var newTableName = $scope.newTableName;
@@ -316,18 +399,21 @@ var TablesController = function TablesController($scope, $routeParams, JsonDB) {
 var Router = function Router($routeProvider, $locationProvider) {
 	"use strict";
 	$routeProvider.when('/admin', {
-		templateUrl: 'core/views/MainPage.html'
+		templateUrl: '/core/views/MainPage.html'
 	}).when('/admin/tables', {
-		templateUrl: 'core/views/Table/Tables.html',
+		templateUrl: '/core/views/Table/Tables.html',
 		controller: 'TablesController'
 	}).when('/admin/tables/:table', {
-		templateUrl: 'views/Table/Table.html',
+		templateUrl: '/core/views/Table/Table.html',
 		controller: 'TableController'
 	}).when('/admin/tables/:table/config', {
-		templateUrl: 'views/Table/config.html',
+		templateUrl: '/core/views/Table/config.html',
+		controller: 'TableController'
+	}).when('/admin/tables/:table/create', {
+		templateUrl: '/core/views/Table/Create.html',
 		controller: 'TableController'
 	}).otherwise({
-		templateUrl: 'core/views/ErrorPage.html'
+		templateUrl: '/core/views/ErrorPage.html'
 	});
 
 	$locationProvider.html5Mode(true);
@@ -335,46 +421,57 @@ var Router = function Router($routeProvider, $locationProvider) {
 'use strict';
 
 var App = angular.module('Application', ['ngResource', 'ngRoute'], function ($httpProvider) {
-	$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
-	$httpProvider.defaults.transformRequest = [function (data) {
-		var param = function param(obj) {
-			var query = '';
-			var name, value, fullSubName, subValue, innerObj, i;
 
-			for (name in obj) {
-				value = obj[name];
-
-				if (value instanceof Array) {
-					for (i = 0; i < value.length; ++i) {
-						subValue = value[i];
-						fullSubName = name + '[' + i + ']';
-						innerObj = {};
-						innerObj[fullSubName] = subValue;
-						query += param(innerObj) + '&';
-					}
-				} else if (value instanceof Object) {
-					for (var subName in value) {
-						if (value.hasOwnProperty(subName) && subName !== '$$hashKey') {
-							subValue = value[subName];
-							fullSubName = name + '[' + subName + ']';
-							innerObj = {};
-							innerObj[fullSubName] = subValue;
-							query += param(innerObj) + '&';
-						}
-					}
-				} else {
-					query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
-				}
-			}
-
-			return query.length ? query.substr(0, query.length - 1) : query;
-		};
-
-		return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
-	}];
+	/*$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+  $httpProvider.defaults.transformRequest = [
+  function (data) {
+  var param = function (obj) {
+  var query = '';
+  var name, value, fullSubName, subValue, innerObj, i;
+ 
+  for (name in obj) {
+  value = obj[name];
+ 
+  if (value instanceof Array) {
+  for (i = 0; i < value.length; ++i) {
+  subValue = value[i];
+  fullSubName = name + '[' + i + ']';
+  innerObj = {};
+  innerObj[fullSubName] = subValue;
+  query += param(innerObj) + '&';
+  }
+  }
+  else if (value instanceof Object) {
+  for (var subName in value) {
+  if (value.hasOwnProperty(subName) && subName !== '$$hashKey') {
+  subValue = value[subName];
+  fullSubName = name + '[' + subName + ']';
+  innerObj = {};
+  innerObj[fullSubName] = subValue;
+  query += param(innerObj) + '&';
+  }
+  }
+  }
+  else {
+  query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
+  }
+  }
+ 
+  return query.length ? query.substr(0, query.length - 1) : query;
+  };
+ 
+  return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
+  }
+  ];*/
 });
 
 App.config(Router);
+
+App.config(function ($interpolateProvider) {
+	$interpolateProvider.startSymbol('[[');
+	$interpolateProvider.endSymbol(']]');
+});
+
 App.controller('MainController', MainController);
 App.controller('TablesController', TablesController);
 App.controller('TableController', TableController);
@@ -384,7 +481,31 @@ App.directive('breadcrumbs', Components.Semantic.BreadCrumbs);
 
 App.directive('deleteButton', Components.Semantic.DeleteButton);
 
-App.directive('inputField', FieldTypes.IntegerDir);
+App.directive('integerDir', FieldTypes.IntegerDir);
+App.directive('stringDir', FieldTypes.StringDir);
+App.directive('booleanDir', FieldTypes.BooleanDir);
+App.directive('urlDir', FieldTypes.UrlDir);
+App.directive('textDir', FieldTypes.TextDir);
+App.directive('dateDir', FieldTypes.DateDir);
+
+App.directive('myCompiller', ['$compile', function ($compile) {
+	var link = function postLink(scope, iElement, iAttrs) {
+		var directive = scope.$eval(iAttrs.directive);
+		scope.value = iAttrs.value;
+
+		if (iAttrs.directive === "directives['Boolean']") {
+			scope.value = scope.value === 'false' ? false : true;
+		}
+
+		iElement.html(directive.template);
+		//console.log(directive.template);
+		$compile(iElement.contents())(scope);
+	};
+	return {
+		replace: true,
+		link: link
+	};
+}]);
 
 App.directive('addButton', Components.Semantic.AddButton);
 //# sourceMappingURL=app.js.map

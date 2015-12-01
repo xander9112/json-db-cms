@@ -1,49 +1,120 @@
 var FieldTypes = FieldTypes || {};
 
-var templates = function (modelName) {
-	"use strict";
-	console.log(modelName);
-	return {
-		Integer: `<input type="text" ng-model="${modelName}" />`,
-		Text:    `<textarea ng-model="modelName"></textarea>`
-
-	}
-
-};
-
 FieldTypes.IntegerDir = function () {
 	"use strict";
 
+	var template = `
+			<div class="ui input">
+				<input type="text" ng-model="value" placeholder="Search...">
+			</div>
+		`;
 	return {
-		// обязательно, для поддержки работы через элемент
 		restrict: 'E',
-
-		// заменить <photo> этим html
-		template:   '<div></div>',
-		replace:    true,
-		transclude: true,
-		scope:      {
-			type:  '@',
-			value: '@'
-		},
-
-		// наблюдение и манипулирование DOM
-		link: function ($scope, element, attrs) {
-			//console.log(attrs.type);
-
-			$(element).append(`<input type="text" ng-model="value" />`);
-
-			/*attrs.$observe('type', function (value) {
-				/!*element.append()*!/
-				//console.log(value);
-				//
-			});*/
-
-			/*// атрибуты именуются с применением «верблюжьей» нотации
-			 attrs.$observe('photoSrc', function (value) {
-			 element.find('img').attr('src', value)
-			 })*/
+		replace: true,
+		template: template,
+		scope: {
+			'value': '='
 		}
-	}
-}
-;
+	};
+};
+
+FieldTypes.StringDir = function () {
+	"use strict";
+
+	var template = `
+		<div class="ui input">
+			<input type="text" ng-model="value" placeholder="">
+		</div>
+			`;
+	return {
+		restrict: 'E',
+		replace: true,
+		template: template,
+		scope: {
+			'value': '='
+		}
+	};
+};
+
+FieldTypes.BooleanDir = function () {
+	"use strict";
+
+	var template = `
+	<div class="ui form">
+		<div class="inline field">
+			<div class="ui toggle checkbox">
+				<input type="checkbox" ng-model="value" tabindex="0" class="hidden">
+				<label></label>
+			</div>
+		</div>
+	</div>`;
+	return {
+		restrict: 'E',
+		template: template,
+		replace: true,
+		scope: {
+			'value': '='
+		},
+		link: function (scope, iElement, iAttrs) {
+			$('.ui.checkbox')
+				.checkbox()
+			;
+		}
+	};
+};
+
+FieldTypes.UrlDir = function () {
+	"use strict";
+
+	var template = `
+		<div class="ui input">
+			<input type="text" ng-model="value" placeholder="">
+		</div>
+			`;
+	return {
+		restrict: 'E',
+		template: template,
+		replace: true,
+		scope: {
+			'value': '='
+		}
+	};
+};
+
+FieldTypes.TextDir = function () {
+	"use strict";
+
+	var template = `
+		<div class="ui form">
+			<div class="inline field">
+				<label>Short Text</label>
+				<textarea rows="2" ng-model="value"></textarea>
+			</div>
+		</div>
+	`;
+	return {
+		restrict: 'E',
+		template: template,
+		replace: true,
+		scope: {
+			'value': '='
+		}
+	};
+};
+
+FieldTypes.DateDir = function () {
+	"use strict";
+
+	var template = `
+		<div class="ui input">
+			<input type="text" ng-model="value" placeholder="">
+		</div>
+			`;
+	return {
+		restrict: 'E',
+		template: template,
+		scope: {
+			'value': '='
+		}
+	};
+};

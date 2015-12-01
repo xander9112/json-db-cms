@@ -3,8 +3,8 @@ var JsonDB = function ($resource) {
 
 	return {
 		tables:      $resource('/admin/tables'),
-		createTable: $resource('core/TableCreate.php'),
-		table:       $resource('core/Table.php'),
-		saveTable:   $resource('core/TableSave.php')
+		createTable: $resource('/admin/tables'),
+		table:       $resource('/admin/tables/:table'),
+		saveTable:   $resource('/admin/tables')
 	}
 };

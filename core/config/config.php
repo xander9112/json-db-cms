@@ -43,7 +43,7 @@ $app['dbAdmin'] = array(
 );
 
 $app['YamlDir'] = $app->getRootDir() . '/YamlDir/';
-$app['jsonDBPath'] = '/data/jsonTables/';
+$app['jsonDBPath'] = $app->getRootDir() . '/data/jsonTables/';
 
 $app['doctrine.connection'] = array(
     'driver' => 'pdo_mysql',
