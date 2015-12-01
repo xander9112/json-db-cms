@@ -1,20 +1,36 @@
 var FieldTypes = FieldTypes || {};
 
+FieldTypes.FieldTypes = function ($compile) {
+	var link = function postLink (scope, iElement, iAttrs) {
+		var directive = scope.$eval(iAttrs.directive);
+		scope.value = iAttrs.value;
+
+		/*angular.element(iElement).parent().append(directive.template)
+		angular.element(iElement).index();*/
+
+		iElement.html(directive.template);
+		$compile(iElement.contents())(scope);
+	};
+	return {
+		replace: true,
+		link:    link
+	};
+};
+
 FieldTypes.IntegerDir = function () {
 	"use strict";
 
 	var template = `
-			<div class="ui input">
-				<input type="text" ng-model="col.value" placeholder="Search...">
+
+	<div class="six wide field">
+				<label>{{col.key}}</label>
+				<input type="text" ng-model="col.value" placeholder="...">
 			</div>
 		`;
 	return {
-		restrict: 'E',
 		replace: true,
-		template: template,
-		/*scope: {
-			'value': '='
-		}*/
+		restrict: 'E',
+		template: template
 	};
 };
 
@@ -22,18 +38,15 @@ FieldTypes.StringDir = function () {
 	"use strict";
 
 	var template = `
-		<div class="ui input">
-			<input type="text" ng-model="col.value" placeholder="">
+		<div class="six wide field">
+			<label>{{col.key}}</label>
+			<input type="text" ng-model="col.value" placeholder="...">
 		</div>
 			`;
 	return {
+		replace: true,
 		restrict: 'E',
-		template: template,
-		/*scope: {
-			'colr': '='
-		},*/
-		link: function (scope) {
-		}
+		template: template
 	};
 };
 
@@ -41,24 +54,23 @@ FieldTypes.BooleanDir = function () {
 	"use strict";
 
 	var template = `
-	<div class="ui form">
-		<div class="inline field">
-			<div class="ui toggle checkbox">
-				<input type="checkbox" ng-model="col.value" tabindex="0" class="hidden">
-				<label></label>
+			<div class="six wide field">
+				<div class="ui toggle checkbox">
+					<label>{{col.key}}</label>
+					<input type="checkbox" ng-model="col.value" tabindex="0" class="hidden">
+				</div>
 			</div>
-		</div>
-	</div>`;
+		`;
 	return {
+		replace: true,
 		restrict: 'E',
 		template: template,
-		/*scope: {
-			'value': '='
-		},*/
-		link: function (scope, iElement, iAttrs) {
-			$('.ui.checkbox')
-				.checkbox()
-			;
+		link:     function (scope, iElement, iAttrs) {
+			$('.ui.checkbox').checkbox();
+
+			angular.element(iElement).find('input').on('change', function () {
+				scope.col.value = $(this).prop('checked');
+			});
 		}
 	};
 };
@@ -67,16 +79,15 @@ FieldTypes.UrlDir = function () {
 	"use strict";
 
 	var template = `
-		<div class="ui input">
-			<input type="text" ng-model="col.value" placeholder="">
+		<div class="six wide field">
+			<label>{{col.key}}</label>
+			<input type="text" ng-model="col.value" placeholder="...">
 		</div>
 			`;
 	return {
+		replace: true,
 		restrict: 'E',
-		template: template,
-		/*scope: {
-			'value': '='
-		}*/
+		template: template
 	};
 };
 
@@ -84,19 +95,15 @@ FieldTypes.TextDir = function () {
 	"use strict";
 
 	var template = `
-		<div class="ui form">
-			<div class="inline field">
-				<label>Short Text</label>
-				<textarea rows="2" ng-model="col.value"></textarea>
+			<div class="six wide field">
+				<label>{{col.key}}</label>
+				<textarea rows="4" ng-model="col.value"></textarea>
 			</div>
-		</div>
 	`;
 	return {
+		replace: true,
 		restrict: 'E',
-		template: template,
-		/*scope: {
-			'value': '='
-		}*/
+		template: template
 	};
 };
 
@@ -104,15 +111,14 @@ FieldTypes.DateDir = function () {
 	"use strict";
 
 	var template = `
-		<div class="ui input">
-			<input type="text" ng-model="col.value" placeholder="">
+		<div class="six wide field">
+			<label>{{col.key}}</label>
+			<input type="text" ng-model="col.value" placeholder="...">
 		</div>
 			`;
 	return {
+		replace: true,
 		restrict: 'E',
-		template: template,
-		/*scope: {
-			'value': '='
-		}*/
+		template: template
 	};
 };

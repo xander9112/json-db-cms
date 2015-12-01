@@ -79,46 +79,59 @@ Components.Semantic.DeleteButton = function () {
 
 var FieldTypes = FieldTypes || {};
 
+FieldTypes.FieldTypes = function ($compile) {
+	var link = function postLink(scope, iElement, iAttrs) {
+		var directive = scope.$eval(iAttrs.directive);
+		scope.value = iAttrs.value;
+
+		/*angular.element(iElement).parent().append(directive.template)
+  angular.element(iElement).index();*/
+
+		iElement.html(directive.template);
+		$compile(iElement.contents())(scope);
+	};
+	return {
+		replace: true,
+		link: link
+	};
+};
+
 FieldTypes.IntegerDir = function () {
 	"use strict";
 
-	var template = "\n\t\t\t<div class=\"ui input\">\n\t\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"Search...\">\n\t\t\t</div>\n\t\t";
+	var template = "\n\n\t<div class=\"six wide field\">\n\t\t\t\t<label>{{col.key}}</label>\n\t\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"...\">\n\t\t\t</div>\n\t\t";
 	return {
-		restrict: 'E',
 		replace: true,
+		restrict: 'E',
 		template: template
 	};
 };
 
-/*scope: {
-	'value': '='
-}*/
 FieldTypes.StringDir = function () {
 	"use strict";
 
-	var template = "\n\t\t<div class=\"ui input\">\n\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"\">\n\t\t</div>\n\t\t\t";
+	var template = "\n\t\t<div class=\"six wide field\">\n\t\t\t<label>{{col.key}}</label>\n\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"...\">\n\t\t</div>\n\t\t\t";
 	return {
+		replace: true,
 		restrict: 'E',
-		template: template,
-		/*scope: {
-  	'colr': '='
-  },*/
-		link: function link(scope) {}
+		template: template
 	};
 };
 
 FieldTypes.BooleanDir = function () {
 	"use strict";
 
-	var template = "\n\t<div class=\"ui form\">\n\t\t<div class=\"inline field\">\n\t\t\t<div class=\"ui toggle checkbox\">\n\t\t\t\t<input type=\"checkbox\" ng-model=\"col.value\" tabindex=\"0\" class=\"hidden\">\n\t\t\t\t<label></label>\n\t\t\t</div>\n\t\t</div>\n\t</div>";
+	var template = "\n\t\t\t<div class=\"six wide field\">\n\t\t\t\t<div class=\"ui toggle checkbox\">\n\t\t\t\t\t<label>{{col.key}}</label>\n\t\t\t\t\t<input type=\"checkbox\" ng-model=\"col.value\" tabindex=\"0\" class=\"hidden\">\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t";
 	return {
+		replace: true,
 		restrict: 'E',
 		template: template,
-		/*scope: {
-  	'value': '='
-  },*/
 		link: function link(scope, iElement, iAttrs) {
 			$('.ui.checkbox').checkbox();
+
+			angular.element(iElement).find('input').on('change', function () {
+				scope.col.value = $(this).prop('checked');
+			});
 		}
 	};
 };
@@ -126,41 +139,35 @@ FieldTypes.BooleanDir = function () {
 FieldTypes.UrlDir = function () {
 	"use strict";
 
-	var template = "\n\t\t<div class=\"ui input\">\n\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"\">\n\t\t</div>\n\t\t\t";
+	var template = "\n\t\t<div class=\"six wide field\">\n\t\t\t<label>{{col.key}}</label>\n\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"...\">\n\t\t</div>\n\t\t\t";
 	return {
+		replace: true,
 		restrict: 'E',
 		template: template
 	};
 };
 
-/*scope: {
-	'value': '='
-}*/
 FieldTypes.TextDir = function () {
 	"use strict";
 
-	var template = "\n\t\t<div class=\"ui form\">\n\t\t\t<div class=\"inline field\">\n\t\t\t\t<label>Short Text</label>\n\t\t\t\t<textarea rows=\"2\" ng-model=\"col.value\"></textarea>\n\t\t\t</div>\n\t\t</div>\n\t";
+	var template = "\n\t\t\t<div class=\"six wide field\">\n\t\t\t\t<label>{{col.key}}</label>\n\t\t\t\t<textarea rows=\"4\" ng-model=\"col.value\"></textarea>\n\t\t\t</div>\n\t";
 	return {
+		replace: true,
 		restrict: 'E',
 		template: template
 	};
 };
 
-/*scope: {
-	'value': '='
-}*/
 FieldTypes.DateDir = function () {
 	"use strict";
 
-	var template = "\n\t\t<div class=\"ui input\">\n\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"\">\n\t\t</div>\n\t\t\t";
+	var template = "\n\t\t<div class=\"six wide field\">\n\t\t\t<label>{{col.key}}</label>\n\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"...\">\n\t\t</div>\n\t\t\t";
 	return {
+		replace: true,
 		restrict: 'E',
 		template: template
 	};
 };
-/*scope: {
-	'value': '='
-}*/
 "use strict";
 
 /*
@@ -279,26 +286,34 @@ var MainController = function MainController($scope, $routeParams, JsonDB) {
 var TableController = function TableController($scope, $routeParams, JsonDB) {
 	$scope.tableName = $routeParams.table;
 
+	$scope.fieldTypes = ['Integer', 'String', 'Boolean', 'Url', 'Text', 'Date'];
+
 	var table = JsonDB.table.get({ table: $scope.tableName }, function (data) {
 		"use strict";
 
-		var config = table.config;
 		$scope.table = table.table;
 
-		$scope.keys = [];
+		$scope.configs = [];
 
-		_.each(config, function (value, key) {
-			$scope.keys.push(key);
+		_.each(table.config, function (value, key) {
+			$scope.configs.push({
+				key: key,
+				value: value
+			});
 		});
 
-		angular.element('.horizontal-scroll').niceScroll({
-			cursorcolor: '#0c64d4',
-			cursoropacitymin: 1,
-			cursorwidth: 10,
-			cursorborder: 'none',
-			cursorborderradius: 0,
-			cursorfixedheight: 90
-		});
+		/*angular.element('.horizontal-scroll').niceScroll({
+   cursorcolor:        '#0c64d4',
+   cursoropacitymin:   1,
+   cursorwidth:        10,
+   cursorborder:       'none',
+   cursorborderradius: 0,
+   cursorfixedheight:  90
+   });*/
+
+		$scope.initTab = function () {
+			angular.element('.menu .item').tab();
+		};
 	});
 
 	$scope.save = function () {
@@ -306,36 +321,60 @@ var TableController = function TableController($scope, $routeParams, JsonDB) {
 		console.log($scope.table);
 	};
 
-	/*$scope.showSettings = function (event) {
-  "use strict";
-  event.preventDefault();
- 
-  $('.ui.modal')
-  .modal('show')
-  ;
-  };
- 
-  $scope.removeItem = function (event, tr) {
+	$scope.saveConfig = function (event) {
+		"use strict";
+
+		event.preventDefault();
+		console.log($scope.configs);
+		return false;
+		//window.location.reload();
+	};
+
+	$scope.addItem = function (event, tr) {
+		"use strict";
+		event.preventDefault();
+		var newTr = [];
+
+		_.each($scope.table[0], function (value, key) {
+			newTr.push({
+				key: value.key,
+				value: value.fieldType == 'Boolean' ? false : '',
+				fieldType: value.fieldType
+			});
+		});
+
+		$scope.table.push(newTr);
+	};
+
+	$scope.showSettings = function (event) {
+		"use strict";
+		event.preventDefault();
+
+		angular.element('.js-settings').modal('show');
+	};
+
+	$scope.removeRowConfig = function (event, tr) {
+		"use strict";
+
+		event.preventDefault();
+		$scope.configs.splice($scope.configs.indexOf(tr), 1);
+	};
+
+	$scope.addRowConfig = function (event, tr) {
+		"use strict";
+
+		event.preventDefault();
+		$scope.configs.push({
+			key: '',
+			value: 'String'
+		});
+	};
+
+	/*$scope.removeItem = function (event, tr) {
   "use strict";
  
   event.preventDefault();
   $scope.table.splice($scope.table.indexOf(tr), 1);
-  };
- 
-  $scope.addItem = function (event, tr) {
-  "use strict";
-  event.preventDefault();
-  var newTr = [];
- 
-  _.each($scope.table[0], function (value, key) {
-  newTr.push({
-  key: value.key,
-  value: '',
-  fieldType: value.fieldType
-  })
-  });
- 
-  $scope.table.push(newTr);
   };
  
   $scope.saveTable = function (event) {
@@ -349,7 +388,7 @@ var TableController = function TableController($scope, $routeParams, JsonDB) {
  
   _.each(value, function (value, key) {
   obj[value.key] = {
-  value: value.value,
+  value:     value.value,
   fieldType: value.fieldType
   }
   });
@@ -359,7 +398,7 @@ var TableController = function TableController($scope, $routeParams, JsonDB) {
  
   var table = new JsonDB.saveTable({
   tableName: $scope.tableName,
-  data: tableToServer
+  data:      tableToServer
   });
  
   table.$save(function (u, putResponseHeaders) {
@@ -478,6 +517,14 @@ App.factory("JsonDB", JsonDB);
 App.directive('breadcrumbs', Components.Semantic.BreadCrumbs);
 
 App.directive('deleteButton', Components.Semantic.DeleteButton);
+App.directive('repeatDone', function () {
+	return function (scope, element, attrs) {
+		if (scope.$last) {
+			// all are rendered
+			scope.$eval(attrs.repeatDone);
+		}
+	};
+});
 
 App.directive('integerDir', FieldTypes.IntegerDir);
 App.directive('stringDir', FieldTypes.StringDir);
@@ -486,43 +533,7 @@ App.directive('urlDir', FieldTypes.UrlDir);
 App.directive('textDir', FieldTypes.TextDir);
 App.directive('dateDir', FieldTypes.DateDir);
 
-App.directive('fieldTypes', ['$compile', function ($compile) {
-	var link = function postLink(scope, iElement, iAttrs) {
-		var directive = scope.$eval(iAttrs.directive);
-		scope.value = iAttrs.value;
-
-		/*if (iAttrs.directive === "directives['Boolean']") {
-   scope.value = scope.value === 'false' ? false : true;
-   }*/
-
-		iElement.html(directive.template);
-		//console.log(directive.template);
-		$compile(iElement.contents())(scope);
-		//console.log(scope);
-		/*scope.$watch(
-  	function (scope) {
-  		// watch the 'compile' expression for changes
-  		console.log(scope);
-  		return scope.$eval(iAttrs.compile);
-  	},
-  	function (value) {
-  		// when the 'compile' expression changes
-  		// assign it into the current DOM
-  		//scope.col.value
-  		//console.log(value);
-  		// compile the new DOM and link it to the current
-  		// scope.
-  		// NOTE: we only compile .childNodes so that
-  		// we don't get into infinite loop compiling ourselves
-  		$compile(iElement.contents())(scope);
-  	}
-  );*/
-	};
-	return {
-		replace: true,
-		link: link
-	};
-}]);
+App.directive('fieldTypes', FieldTypes.FieldTypes);
 
 App.directive('addButton', Components.Semantic.AddButton);
 //# sourceMappingURL=app.js.map

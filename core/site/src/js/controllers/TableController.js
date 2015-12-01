@@ -1,28 +1,41 @@
 var TableController = function ($scope, $routeParams, JsonDB) {
 	$scope.tableName = $routeParams.table;
 
-	var table = JsonDB.table.get({table: $scope.tableName}, function (data) {
+	$scope.fieldTypes = [
+		'Integer',
+		'String',
+		'Boolean',
+		'Url',
+		'Text',
+		'Date'
+	];
+
+	var table = JsonDB.table.get({ table: $scope.tableName }, function (data) {
 		"use strict";
 
-		var config = table.config;
 		$scope.table = table.table;
 
-		$scope.keys = [];
+		$scope.configs = [];
 
-		_.each(config, function (value, key) {
-			$scope.keys.push(key);
+		_.each(table.config, function (value, key) {
+			$scope.configs.push({
+				key:   key,
+				value: value
+			});
 		});
 
+		/*angular.element('.horizontal-scroll').niceScroll({
+		 cursorcolor:        '#0c64d4',
+		 cursoropacitymin:   1,
+		 cursorwidth:        10,
+		 cursorborder:       'none',
+		 cursorborderradius: 0,
+		 cursorfixedheight:  90
+		 });*/
 
-		angular.element('.horizontal-scroll').niceScroll({
-			cursorcolor: '#0c64d4',
-			cursoropacitymin: 1,
-			cursorwidth: 10,
-			cursorborder: 'none',
-			cursorborderradius: 0,
-			cursorfixedheight: 90
-		});
-
+		$scope.initTab = function () {
+			angular.element('.menu .item').tab();
+		}
 	});
 
 	$scope.save = function () {
@@ -30,36 +43,60 @@ var TableController = function ($scope, $routeParams, JsonDB) {
 		console.log($scope.table);
 	};
 
-	/*$scope.showSettings = function (event) {
-	 "use strict";
-	 event.preventDefault();
+	$scope.saveConfig = function (event) {
+		"use strict";
 
-	 $('.ui.modal')
-	 .modal('show')
-	 ;
-	 };
+		event.preventDefault();
+		console.log($scope.configs);
+		return false;
+		//window.location.reload();
+	};
 
-	 $scope.removeItem = function (event, tr) {
+	$scope.addItem = function (event, tr) {
+		"use strict";
+		event.preventDefault();
+		var newTr = [];
+
+		_.each($scope.table[0], function (value, key) {
+			newTr.push({
+				key:       value.key,
+				value:     value.fieldType == 'Boolean' ? false : '',
+				fieldType: value.fieldType
+			})
+		});
+
+		$scope.table.push(newTr);
+	};
+
+	$scope.showSettings = function (event) {
+		"use strict";
+		event.preventDefault();
+
+		angular.element('.js-settings').modal('show');
+	};
+
+	$scope.removeRowConfig = function (event, tr) {
+		"use strict";
+
+		event.preventDefault();
+		$scope.configs.splice($scope.configs.indexOf(tr), 1);
+	};
+
+	$scope.addRowConfig = function (event, tr) {
+		"use strict";
+
+		event.preventDefault();
+		$scope.configs.push({
+			key:   '',
+			value: 'String'
+		});
+	};
+
+	/*$scope.removeItem = function (event, tr) {
 	 "use strict";
 
 	 event.preventDefault();
 	 $scope.table.splice($scope.table.indexOf(tr), 1);
-	 };
-
-	 $scope.addItem = function (event, tr) {
-	 "use strict";
-	 event.preventDefault();
-	 var newTr = [];
-
-	 _.each($scope.table[0], function (value, key) {
-	 newTr.push({
-	 key: value.key,
-	 value: '',
-	 fieldType: value.fieldType
-	 })
-	 });
-
-	 $scope.table.push(newTr);
 	 };
 
 	 $scope.saveTable = function (event) {
@@ -73,7 +110,7 @@ var TableController = function ($scope, $routeParams, JsonDB) {
 
 	 _.each(value, function (value, key) {
 	 obj[value.key] = {
-	 value: value.value,
+	 value:     value.value,
 	 fieldType: value.fieldType
 	 }
 	 });
@@ -83,7 +120,7 @@ var TableController = function ($scope, $routeParams, JsonDB) {
 
 	 var table = new JsonDB.saveTable({
 	 tableName: $scope.tableName,
-	 data: tableToServer
+	 data:      tableToServer
 	 });
 
 	 table.$save(function (u, putResponseHeaders) {
