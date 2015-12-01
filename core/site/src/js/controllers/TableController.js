@@ -8,6 +8,7 @@ var TableController = function ($scope, $routeParams, JsonDB) {
 		$scope.table = table.table;
 
 		$scope.keys = [];
+
 		_.each(config, function (value, key) {
 			$scope.keys.push(key);
 		});
@@ -27,7 +28,7 @@ var TableController = function ($scope, $routeParams, JsonDB) {
 	$scope.save = function () {
 		"use strict";
 		console.log($scope.table);
-	}
+	};
 
 	/*$scope.showSettings = function (event) {
 	 "use strict";

@@ -66,19 +66,40 @@ App.directive('urlDir', FieldTypes.UrlDir);
 App.directive('textDir', FieldTypes.TextDir);
 App.directive('dateDir', FieldTypes.DateDir);
 
-App.directive('myCompiller', ['$compile',
+App.directive('fieldTypes', ['$compile',
 	function ($compile) {
 		var link = function postLink (scope, iElement, iAttrs) {
 			var directive = scope.$eval(iAttrs.directive);
 			scope.value = iAttrs.value;
 
-			if (iAttrs.directive === "directives['Boolean']") {
-				scope.value = scope.value === 'false' ? false : true;
-			}
+			/*if (iAttrs.directive === "directives['Boolean']") {
+			 scope.value = scope.value === 'false' ? false : true;
+			 }*/
 
 			iElement.html(directive.template);
 			//console.log(directive.template);
 			$compile(iElement.contents())(scope);
+//console.log(scope);
+			/*scope.$watch(
+				function (scope) {
+					// watch the 'compile' expression for changes
+					console.log(scope);
+					return scope.$eval(iAttrs.compile);
+				},
+				function (value) {
+					// when the 'compile' expression changes
+					// assign it into the current DOM
+					//scope.col.value
+					//console.log(value);
+					// compile the new DOM and link it to the current
+					// scope.
+					// NOTE: we only compile .childNodes so that
+					// we don't get into infinite loop compiling ourselves
+					$compile(iElement.contents())(scope);
+				}
+			);*/
+
+
 		};
 		return {
 			replace: true,

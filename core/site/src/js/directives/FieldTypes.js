@@ -5,16 +5,16 @@ FieldTypes.IntegerDir = function () {
 
 	var template = `
 			<div class="ui input">
-				<input type="text" ng-model="value" placeholder="Search...">
+				<input type="text" ng-model="col.value" placeholder="Search...">
 			</div>
 		`;
 	return {
 		restrict: 'E',
 		replace: true,
 		template: template,
-		scope: {
+		/*scope: {
 			'value': '='
-		}
+		}*/
 	};
 };
 
@@ -23,15 +23,16 @@ FieldTypes.StringDir = function () {
 
 	var template = `
 		<div class="ui input">
-			<input type="text" ng-model="value" placeholder="">
+			<input type="text" ng-model="col.value" placeholder="">
 		</div>
 			`;
 	return {
 		restrict: 'E',
-		replace: true,
 		template: template,
-		scope: {
-			'value': '='
+		/*scope: {
+			'colr': '='
+		},*/
+		link: function (scope) {
 		}
 	};
 };
@@ -43,7 +44,7 @@ FieldTypes.BooleanDir = function () {
 	<div class="ui form">
 		<div class="inline field">
 			<div class="ui toggle checkbox">
-				<input type="checkbox" ng-model="value" tabindex="0" class="hidden">
+				<input type="checkbox" ng-model="col.value" tabindex="0" class="hidden">
 				<label></label>
 			</div>
 		</div>
@@ -51,10 +52,9 @@ FieldTypes.BooleanDir = function () {
 	return {
 		restrict: 'E',
 		template: template,
-		replace: true,
-		scope: {
+		/*scope: {
 			'value': '='
-		},
+		},*/
 		link: function (scope, iElement, iAttrs) {
 			$('.ui.checkbox')
 				.checkbox()
@@ -68,16 +68,15 @@ FieldTypes.UrlDir = function () {
 
 	var template = `
 		<div class="ui input">
-			<input type="text" ng-model="value" placeholder="">
+			<input type="text" ng-model="col.value" placeholder="">
 		</div>
 			`;
 	return {
 		restrict: 'E',
 		template: template,
-		replace: true,
-		scope: {
+		/*scope: {
 			'value': '='
-		}
+		}*/
 	};
 };
 
@@ -88,17 +87,16 @@ FieldTypes.TextDir = function () {
 		<div class="ui form">
 			<div class="inline field">
 				<label>Short Text</label>
-				<textarea rows="2" ng-model="value"></textarea>
+				<textarea rows="2" ng-model="col.value"></textarea>
 			</div>
 		</div>
 	`;
 	return {
 		restrict: 'E',
 		template: template,
-		replace: true,
-		scope: {
+		/*scope: {
 			'value': '='
-		}
+		}*/
 	};
 };
 
@@ -107,14 +105,14 @@ FieldTypes.DateDir = function () {
 
 	var template = `
 		<div class="ui input">
-			<input type="text" ng-model="value" placeholder="">
+			<input type="text" ng-model="col.value" placeholder="">
 		</div>
 			`;
 	return {
 		restrict: 'E',
 		template: template,
-		scope: {
+		/*scope: {
 			'value': '='
-		}
+		}*/
 	};
 };

@@ -75,49 +75,48 @@ Components.Semantic.DeleteButton = function () {
 		template: '<button class="ui button" ng-click="action()"><i class="remove icon"></i> {{text}}</button>'
 	};
 };
-'use strict';
+"use strict";
 
 var FieldTypes = FieldTypes || {};
 
 FieldTypes.IntegerDir = function () {
 	"use strict";
 
-	var template = '\n\t\t\t<div class="ui input">\n\t\t\t\t<input type="text" ng-model="value" placeholder="Search...">\n\t\t\t</div>\n\t\t';
+	var template = "\n\t\t\t<div class=\"ui input\">\n\t\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"Search...\">\n\t\t\t</div>\n\t\t";
 	return {
 		restrict: 'E',
 		replace: true,
-		template: template,
-		scope: {
-			'value': '='
-		}
+		template: template
 	};
 };
 
+/*scope: {
+	'value': '='
+}*/
 FieldTypes.StringDir = function () {
 	"use strict";
 
-	var template = '\n\t\t<div class="ui input">\n\t\t\t<input type="text" ng-model="value" placeholder="">\n\t\t</div>\n\t\t\t';
+	var template = "\n\t\t<div class=\"ui input\">\n\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"\">\n\t\t</div>\n\t\t\t";
 	return {
 		restrict: 'E',
-		replace: true,
 		template: template,
-		scope: {
-			'value': '='
-		}
+		/*scope: {
+  	'colr': '='
+  },*/
+		link: function link(scope) {}
 	};
 };
 
 FieldTypes.BooleanDir = function () {
 	"use strict";
 
-	var template = '\n\t<div class="ui form">\n\t\t<div class="inline field">\n\t\t\t<div class="ui toggle checkbox">\n\t\t\t\t<input type="checkbox" ng-model="value" tabindex="0" class="hidden">\n\t\t\t\t<label></label>\n\t\t\t</div>\n\t\t</div>\n\t</div>';
+	var template = "\n\t<div class=\"ui form\">\n\t\t<div class=\"inline field\">\n\t\t\t<div class=\"ui toggle checkbox\">\n\t\t\t\t<input type=\"checkbox\" ng-model=\"col.value\" tabindex=\"0\" class=\"hidden\">\n\t\t\t\t<label></label>\n\t\t\t</div>\n\t\t</div>\n\t</div>";
 	return {
 		restrict: 'E',
 		template: template,
-		replace: true,
-		scope: {
-			'value': '='
-		},
+		/*scope: {
+  	'value': '='
+  },*/
 		link: function link(scope, iElement, iAttrs) {
 			$('.ui.checkbox').checkbox();
 		}
@@ -127,43 +126,41 @@ FieldTypes.BooleanDir = function () {
 FieldTypes.UrlDir = function () {
 	"use strict";
 
-	var template = '\n\t\t<div class="ui input">\n\t\t\t<input type="text" ng-model="value" placeholder="">\n\t\t</div>\n\t\t\t';
+	var template = "\n\t\t<div class=\"ui input\">\n\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"\">\n\t\t</div>\n\t\t\t";
 	return {
 		restrict: 'E',
-		template: template,
-		replace: true,
-		scope: {
-			'value': '='
-		}
+		template: template
 	};
 };
 
+/*scope: {
+	'value': '='
+}*/
 FieldTypes.TextDir = function () {
 	"use strict";
 
-	var template = '\n\t\t<div class="ui form">\n\t\t\t<div class="inline field">\n\t\t\t\t<label>Short Text</label>\n\t\t\t\t<textarea rows="2" ng-model="value"></textarea>\n\t\t\t</div>\n\t\t</div>\n\t';
+	var template = "\n\t\t<div class=\"ui form\">\n\t\t\t<div class=\"inline field\">\n\t\t\t\t<label>Short Text</label>\n\t\t\t\t<textarea rows=\"2\" ng-model=\"col.value\"></textarea>\n\t\t\t</div>\n\t\t</div>\n\t";
 	return {
 		restrict: 'E',
-		template: template,
-		replace: true,
-		scope: {
-			'value': '='
-		}
+		template: template
 	};
 };
 
+/*scope: {
+	'value': '='
+}*/
 FieldTypes.DateDir = function () {
 	"use strict";
 
-	var template = '\n\t\t<div class="ui input">\n\t\t\t<input type="text" ng-model="value" placeholder="">\n\t\t</div>\n\t\t\t';
+	var template = "\n\t\t<div class=\"ui input\">\n\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"\">\n\t\t</div>\n\t\t\t";
 	return {
 		restrict: 'E',
-		template: template,
-		scope: {
-			'value': '='
-		}
+		template: template
 	};
 };
+/*scope: {
+	'value': '='
+}*/
 "use strict";
 
 /*
@@ -289,6 +286,7 @@ var TableController = function TableController($scope, $routeParams, JsonDB) {
 		$scope.table = table.table;
 
 		$scope.keys = [];
+
 		_.each(config, function (value, key) {
 			$scope.keys.push(key);
 		});
@@ -488,18 +486,37 @@ App.directive('urlDir', FieldTypes.UrlDir);
 App.directive('textDir', FieldTypes.TextDir);
 App.directive('dateDir', FieldTypes.DateDir);
 
-App.directive('myCompiller', ['$compile', function ($compile) {
+App.directive('fieldTypes', ['$compile', function ($compile) {
 	var link = function postLink(scope, iElement, iAttrs) {
 		var directive = scope.$eval(iAttrs.directive);
 		scope.value = iAttrs.value;
 
-		if (iAttrs.directive === "directives['Boolean']") {
-			scope.value = scope.value === 'false' ? false : true;
-		}
+		/*if (iAttrs.directive === "directives['Boolean']") {
+   scope.value = scope.value === 'false' ? false : true;
+   }*/
 
 		iElement.html(directive.template);
 		//console.log(directive.template);
 		$compile(iElement.contents())(scope);
+		//console.log(scope);
+		/*scope.$watch(
+  	function (scope) {
+  		// watch the 'compile' expression for changes
+  		console.log(scope);
+  		return scope.$eval(iAttrs.compile);
+  	},
+  	function (value) {
+  		// when the 'compile' expression changes
+  		// assign it into the current DOM
+  		//scope.col.value
+  		//console.log(value);
+  		// compile the new DOM and link it to the current
+  		// scope.
+  		// NOTE: we only compile .childNodes so that
+  		// we don't get into infinite loop compiling ourselves
+  		$compile(iElement.contents())(scope);
+  	}
+  );*/
 	};
 	return {
 		replace: true,
