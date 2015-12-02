@@ -12,6 +12,7 @@ gulp.task('scripts', ['scripts.app', 'scripts.vendor']);
 
 gulp.task('scripts.app', function () {
 	return gulp.src([
+		'site/src/js/modules/*.js',
 		'site/src/js/services/*.js',
 		'site/src/js/directives/*.js',
 		'site/src/js/controllers/*.js',

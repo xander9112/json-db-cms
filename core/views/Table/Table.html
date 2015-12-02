@@ -1,134 +1,121 @@
-<div class="ui grid">
-	<div class="four column row">
-		<div class="left floated column">
-			<div class="ui animated fade button" tabindex="0" ng-click="showSettings($event)">
-				<div class="visible content">
-					Настройки
-				</div>
-				<div class="hidden content">
-					<i class="icon settings"></i>
-				</div>
-			</div>
-			<div class="ui modal js-settings">
-				<i class="close icon"></i>
+<div class="ui massive negative message" ng-show="notFound">
+	<div class="header">
+		[[ notFound ]]
+	</div>
+</div>
 
-				<div class="header">
-					Настройки
+<div ng-hide="notFound">
+	<div class="ui grid">
+		<div class="four column row">
+			<div class="left floated column">
+				<div class="ui animated fade button" tabindex="0" ng-click="showSettings($event)">
+					<div class="visible content">
+						Настройки
+					</div>
+					<div class="hidden content">
+						<i class="icon settings"></i>
+					</div>
 				</div>
-				<div class="content">
-					<form class="ui form">
-						<div class="field" ng-repeat="config in configs">
-							<label>Название поля</label>
+				<div class="ui modal js-settings">
+					<i class="close icon"></i>
 
-							<div class="three fields">
-								<div class="field">
-									<input type="text" ng-model="config.key" placeholder="[[config.key]]">
-								</div>
-								<div class="field">
-									<select class="ui fluid dropdown" ng-model="config.value">
-										<option value="[[type]]" ng-repeat="type in fieldTypes">[[type]]</option>
-									</select>
-								</div>
-								<div class="field">
-									<button class="ui red basic icon button" ng-click="removeRowConfig($event, config)">
-										<i class="close icon"></i>
-									</button>
+					<div class="header">
+						Настройки
+					</div>
+					<div class="content">
+						<form class="ui form">
+							<div class="field" ng-repeat="config in configs">
+								<label>Название поля</label>
+
+								<div class="three fields">
+									<div class="field">
+										<input type="text" ng-model="config.key" placeholder="[[config.key]]">
+									</div>
+									<div class="field">
+										<select class="ui fluid dropdown" ng-model="config.value">
+											<option value="[[type]]" ng-repeat="type in fieldTypes">[[type]]</option>
+										</select>
+									</div>
+									<div class="field">
+										<button class="ui red basic icon button" ng-click="removeRowConfig($event, config)">
+											<i class="close icon"></i>
+										</button>
+									</div>
 								</div>
 							</div>
+						</form>
+					</div>
+					<div class="actions">
+						<div class="ui green basic button" ng-click="addRowConfig($event)">
+							Добавить строку
 						</div>
-					</form>
+						<div class="ui green right labeled icon button" ng-click="saveConfig($event)">
+							Сохранить
+							<i class="checkmark icon"></i>
+						</div>
+					</div>
 				</div>
-				<div class="actions">
-					<div class="ui green basic button" ng-click="addRowConfig($event)">
-						Добавить строку
+			</div>
+			<div class="right floated column">
+				<div class="ui buttons">
+					<!--<button class="ui button">Добавить строку</button>-->
+					<div class="ui positive animated fade button" tabindex="0" ng-click="addItem($event)">
+						<div class="visible content">
+							Добавить строку
+						</div>
+						<div class="hidden content">
+							<i class="icon add circle"></i>
+						</div>
 					</div>
-					<div class="ui green right labeled icon button" ng-click="saveConfig($event)">
-						Сохранить
-						<i class="checkmark icon"></i>
+					<div class="or"></div>
+					<div class="ui positive animated fade button" tabindex="0" ng-click="save($event)">
+						<div class="visible content">
+							Сохранить
+						</div>
+						<div class="hidden content">
+							<i class="icon save"></i>
+						</div>
 					</div>
+					<!--<button class="ui positive button">Сохранить</button>-->
 				</div>
 			</div>
 		</div>
-		<div class="right floated column">
-			<div class="ui buttons">
-				<!--<button class="ui button">Добавить строку</button>-->
-				<div class="ui positive animated fade button" tabindex="0" ng-click="addItem($event)">
-					<div class="visible content">
-						Добавить строку
+	</div>
+	<div ng-tabs class="table-tabs">
+		<div class="ui top attached tabular menu">
+			<a
+							ng-tab-head="[[$index == 0 ? 'active' : '']]"
+							class="item"
+							ng-repeat="row in table"
+							ng-class="$index == 0 ? 'active' : ''"
+							data-tab="row[[$index]]">Строка - [[$index]]</a>
+		</div>
+		<div
+						ng-tab-body="[[$index == 0 ? 'active' : '']]"
+						ng-repeat="row in table"
+						repeat-done="initTab()"
+						class="ui bottom attached tab segment"
+						ng-class="$index == 0 ? 'active' : ''">
+
+			<div class="ui grid">
+				<div class="four column row">
+					<div class="left floated column">
+						<form class="ui form">
+							<field-types
+											class="fields"
+											ng-repeat="col in row"
+											directive="directives['[[ col.fieldType ]]']"
+											value="col"></field-types>
+						</form>
 					</div>
-					<div class="hidden content">
-						<i class="icon add circle"></i>
+					<div class="right floated column">
+						<button class="ui red basic button" ng-click="removeRow($event, row)">
+							<i class="remove icon"></i>
+							Удалить
+						</button>
 					</div>
 				</div>
-				<div class="or"></div>
-				<div class="ui positive animated fade button" tabindex="0" ng-click="save($event)">
-					<div class="visible content">
-						Сохранить
-					</div>
-					<div class="hidden content">
-						<i class="icon save"></i>
-					</div>
-				</div>
-				<!--<button class="ui positive button">Сохранить</button>-->
 			</div>
 		</div>
 	</div>
 </div>
-<div class="ui top attached tabular menu js-table-tabs">
-	<a
-		class="item"
-		ng-repeat="row in table"
-		ng-class="$index == 0 ? 'active' : ''"
-		data-tab="row[[$index]]">Строка - [[$index]]</a>
-</div>
-<div
-	ng-repeat="row in table"
-	repeat-done="initTab()"
-	class="ui bottom attached tab segment"
-	ng-class="$index == 0 ? 'active' : ''"
-	data-tab="row[[$index]]">
-	<form class="ui form">
-		<field-types
-			class="fields"
-			ng-repeat="col in row"
-			directive="directives['[[ col.fieldType ]]']"
-			value="col"></field-types>
-	</form>
-</div>
-
-<!--
-<div class="horizontal-scroll">
-	<table class="ui padded celled table">
-		<thead>
-		<tr>
-			<th ng-repeat="key in keys">
-				[[key]]
-			</th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr ng-repeat="row in table">
-			<td ng-repeat="col in row">
-				<field-types directive="directives['[[ col.fieldType ]]']" value="col"></field-types>
-			</td>
-		</tr>
-		</tbody>
-		&lt;!&ndash;<tfoot class="full-width">
-		<tr>
-			<th></th>
-			<th colspan="4">
-				<div class="ui right floated small primary labeled icon button" ng-click="save()">
-					<i class="user icon"></i> Add User
-				</div>
-				<div class="ui small button">
-					Approve
-				</div>
-				<div class="ui small  disabled button">
-					Approve All
-				</div>
-			</th>
-		</tr>
-		</tfoot>&ndash;&gt;
-	</table>
-</div>
--->

@@ -1,4 +1,4 @@
-var App = angular.module('Application', ['ngResource', 'ngRoute'], function ($httpProvider) {
+var App = angular.module('Application', [ 'ngResource', 'ngRoute', 'tabs' ], function ($httpProvider) {
 
 	/*$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
 	 $httpProvider.defaults.transformRequest = [

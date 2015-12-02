@@ -1,4 +1,5 @@
 var FieldTypes = FieldTypes || {};
+var colWidth = 'sixteen';
 
 FieldTypes.FieldTypes = function ($compile) {
 	var link = function postLink (scope, iElement, iAttrs) {
@@ -22,7 +23,7 @@ FieldTypes.IntegerDir = function () {
 
 	var template = `
 
-	<div class="six wide field">
+	<div class="${colWidth} wide field">
 				<label>{{col.key}}</label>
 				<input type="text" ng-model="col.value" placeholder="...">
 			</div>
@@ -38,7 +39,7 @@ FieldTypes.StringDir = function () {
 	"use strict";
 
 	var template = `
-		<div class="six wide field">
+		<div class="${colWidth} wide field">
 			<label>{{col.key}}</label>
 			<input type="text" ng-model="col.value" placeholder="...">
 		</div>
@@ -54,7 +55,7 @@ FieldTypes.BooleanDir = function () {
 	"use strict";
 
 	var template = `
-			<div class="six wide field">
+			<div class="${colWidth} wide field">
 				<div class="ui toggle checkbox">
 					<label>{{col.key}}</label>
 					<input type="checkbox" ng-model="col.value" tabindex="0" class="hidden">
@@ -79,7 +80,7 @@ FieldTypes.UrlDir = function () {
 	"use strict";
 
 	var template = `
-		<div class="six wide field">
+		<div class="${colWidth} wide field">
 			<label>{{col.key}}</label>
 			<input type="text" ng-model="col.value" placeholder="...">
 		</div>
@@ -95,7 +96,7 @@ FieldTypes.TextDir = function () {
 	"use strict";
 
 	var template = `
-			<div class="six wide field">
+			<div class="${colWidth} wide field">
 				<label>{{col.key}}</label>
 				<textarea rows="4" ng-model="col.value"></textarea>
 			</div>
@@ -111,7 +112,7 @@ FieldTypes.DateDir = function () {
 	"use strict";
 
 	var template = `
-		<div class="six wide field">
+		<div class="${colWidth} wide field">
 			<label>{{col.key}}</label>
 			<input type="text" ng-model="col.value" placeholder="...">
 		</div>

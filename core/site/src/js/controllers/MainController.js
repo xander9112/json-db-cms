@@ -1,45 +1,38 @@
 var MainController = function ($scope, $routeParams, JsonDB) {
 	"use strict";
 
+	$scope.loading = true;
+
+	$scope.fieldTypes = [
+		'Integer',
+		'String',
+		'Boolean',
+		'Url',
+		'Text',
+		'Date'
+	];
+
 	var directives = {
 		Integer: {
 			template: '<integer-dir value="value"/>'
 		},
-		String: {
+		String:  {
 			template: '<string-dir value="value"/>'
 
 		},
 		Boolean: {
 			template: '<boolean-dir value="value"/>'
 		},
-		Url: {
+		Url:     {
 			template: '<url-dir value="value"/>'
 		},
-		Text: {
+		Text:    {
 			template: '<text-dir value="value"/>'
 		},
-		Date: {
+		Date:    {
 			template: '<date-dir value="value"/>'
 		}
 	};
 
-	/*var directives = [
-	 {
-	 template: '<integer-dir data="data"/>',
-	 data: {
-	 value: 'qwerty'
-	 }
-	 }, {
-	 template: '<directive-two data="data"/>',
-	 data: {
-	 message: true
-	 }
-	 }, {
-	 template: '<directive-thr data="data"/>',
-	 data: {
-	 message: 126
-	 }
-	 }
-	 ];*/
 	$scope.directives = directives;
 };

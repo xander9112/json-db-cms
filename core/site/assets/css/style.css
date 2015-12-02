@@ -27918,3 +27918,6 @@ main {
 .horizontal-scroll {
   overflow-x: visible;
 }
+.table-tabs {
+  margin-top: 2rem;
+}

@@ -1,14 +1,34 @@
 var TablesController = function ($scope, $routeParams, JsonDB) {
+	$scope.$parent.loading = true;
 
-	$scope.tables = JsonDB.tables.query();
-	$scope.addTable = function () {
+	$scope.tables = JsonDB.tables.query({}, true, function () {
 		"use strict";
+		$scope.$parent.loading = false;
+	});
+
+	$scope.newTableNameError = false;
+
+	$scope.newTableName = '';
+
+	$scope.addTable = function (event) {
+		"use strict";
+		event.preventDefault();
+
 		var newTableName = $scope.newTableName;
 
-		var newDb = new JsonDB.createTable({createTable: newTableName});
-		newDb.$save();
+		if (newTableName === '') {
+			$scope.newTableNameError = true;
+		} else {
+			$scope.newTableNameError = false;
+		}
 
-		$scope.tables.push(newTableName);
+
+		if (!$scope.newTableNameError) {
+			/*var newDb = new JsonDB.createTable({ createTable: newTableName });
+			 newDb.$save();*/
+			$scope.tables.push(newTableName);
+			$scope.newTableName = '';
+		}
 	};
 
 	$scope.removeTable = function (db) {

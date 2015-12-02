@@ -51,10 +51,17 @@ class Tables extends Controller
      */
     public function table($table)
     {
-        $tableConfig = Yaml::parse(file_get_contents($this->YamlDir() . $table . '.yaml'));
-
         if (0 === strpos($this->request->headers->get('Accept'), 'application/json')) {
 
+            $scanned_directory = array_diff(scandir($this->app['jsonDBPath']), array('..', '.'));
+
+            if(!array_search($table . '.json', $scanned_directory)) {
+                return new Response(json_encode(array(
+                    'notFound' => 'Такой таблицы не существует',
+                )));
+            }
+
+            $tableConfig = Yaml::parse(file_get_contents($this->YamlDir() . $table . '.yaml'));
 
             $table = array(
                 0 =>
@@ -153,7 +160,7 @@ class Tables extends Controller
                         'longitude' => '-34.204931',
                     ),
             );
-//        print Yaml::dump($tableConfig);
+
             $newTable = array();
 
             foreach ($table as $row) {
@@ -169,9 +176,11 @@ class Tables extends Controller
                 $newTable[] = $arr;
             }
 
-            /*echo "<pre>";
-            var_dump(json_encode($newTable));
-            echo "</pre>";*/
+            /* return new Response(json_encode(array(
+                 'table' => array(),
+                 'config' => array(),
+             )));*/
+
             return new Response(json_encode(array(
                 'table' => $newTable,
                 'config' => $tableConfig,

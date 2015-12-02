@@ -1,42 +1,41 @@
 var TableController = function ($scope, $routeParams, JsonDB) {
+	$scope.$parent.loading = true;
+	$scope.notFound = false;
 	$scope.tableName = $routeParams.table;
+	$scope.table = [];
+	$scope.configs = [];
 
-	$scope.fieldTypes = [
-		'Integer',
-		'String',
-		'Boolean',
-		'Url',
-		'Text',
-		'Date'
-	];
-
-	var table = JsonDB.table.get({ table: $scope.tableName }, function (data) {
+	function getTable () {
 		"use strict";
 
-		$scope.table = table.table;
+		var table = JsonDB.table;
 
-		$scope.configs = [];
+		table.get({ table: $scope.tableName }, function (data) {
+			"use strict";
 
-		_.each(table.config, function (value, key) {
-			$scope.configs.push({
-				key:   key,
-				value: value
+			if (data.notFound) {
+				$scope.notFound = data.notFound;
+			}
+
+
+			$scope.table = data.table;
+
+			_.each(data.config, function (value, key) {
+				$scope.configs.push({
+					key:   key,
+					value: value
+				});
 			});
+
+			$scope.initTab = function () {
+				angular.element('.menu .item').tab();
+			};
+
+			$scope.$parent.loading = false;
 		});
+	}
 
-		/*angular.element('.horizontal-scroll').niceScroll({
-		 cursorcolor:        '#0c64d4',
-		 cursoropacitymin:   1,
-		 cursorwidth:        10,
-		 cursorborder:       'none',
-		 cursorborderradius: 0,
-		 cursorfixedheight:  90
-		 });*/
-
-		$scope.initTab = function () {
-			angular.element('.menu .item').tab();
-		}
-	});
+	getTable();
 
 	$scope.save = function () {
 		"use strict";
@@ -47,8 +46,23 @@ var TableController = function ($scope, $routeParams, JsonDB) {
 		"use strict";
 
 		event.preventDefault();
-		console.log($scope.configs);
-		return false;
+
+		angular.forEach($scope.configs, function (value) {
+			console.log(value.key);
+		});
+
+		/*let config = new JsonDB.updateTableConfig({
+		 table: $scope.tableName
+		 });
+
+		 console.log(config.$save());*/
+
+		/*config.$update(function (u, putResponseHeaders) {
+		 console.log(u);
+		 });*/
+
+		//getTable();
+
 		//window.location.reload();
 	};
 
@@ -57,7 +71,7 @@ var TableController = function ($scope, $routeParams, JsonDB) {
 		event.preventDefault();
 		var newTr = [];
 
-		_.each($scope.table[0], function (value, key) {
+		_.each($scope.table[ 0 ], function (value, key) {
 			newTr.push({
 				key:       value.key,
 				value:     value.fieldType == 'Boolean' ? false : '',
@@ -66,6 +80,15 @@ var TableController = function ($scope, $routeParams, JsonDB) {
 		});
 
 		$scope.table.push(newTr);
+	};
+
+	$scope.removeRow = function (event, row) {
+		"use strict";
+
+		event.preventDefault();
+		$scope.table.splice($scope.table.indexOf(row), 1);
+
+		$scope.initTab();
 	};
 
 	$scope.showSettings = function (event) {

@@ -11,24 +11,16 @@
         <div class="ui inverted secondary pointing menu">
             <div class="ui container">
                 <a href="/admin" class="header item">
-                    <img class="logo" src="{{ app.asset_path }}/images/logo_white.png">
-                    JsonDB - admin
+                    JsonDB
                 </a>
                 <a href="/admin/tables" class="item">Таблицы</a>
-                <!--<div class="ui simple dropdown item">
-                    Таблицы <i class="dropdown icon"></i>
-
-                    <div class="menu">
-                        <a class="item" href="/admin/views/Table.php?table=<?= $table; ?>"><?= $table; ?></a>
-                    </div>
-                </div>-->
             </div>
             <div class="right menu">
                 <a href="/" target="_blank" class="ui item">
                     На сайт
                 </a>
                 <a class="ui item">
-                    Logout
+                    Выход
                 </a>
             </div>
         </div>
@@ -36,6 +28,9 @@
 </header>
 <div class="g-messages"></div>
 <main role="main">
+    <div class="ui dimmer" ng-class="loading ? 'active' : ''">
+        <div class="ui text loader">Loading</div>
+    </div>
     <div class="ui grid">
         <div class="three wide column">
             <h2 class="ui center aligned icon header">

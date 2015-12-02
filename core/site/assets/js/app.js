@@ -1,3 +1,89 @@
+/**
+ * The angular tabs module
+ * @author: nerv
+ * @version: 0.2.5, 2012-08-25
+ */
+'use strict';
+
+(function (angular) {
+
+    'use strict';
+
+    angular.module('tabs', []);
+
+    angular.module('tabs').directive('ngTabs', ngTabsDirective);
+
+    function ngTabsDirective() {
+        return {
+            scope: true,
+            restrict: 'EAC',
+            controller: ngTabsController
+        };
+    }
+
+    function ngTabsController($scope) {
+        $scope.tabs = {
+            index: 0,
+            count: 0
+        };
+
+        this.headIndex = 0;
+        this.bodyIndex = 0;
+
+        this.getTabHeadIndex = function () {
+            return $scope.tabs.count = ++this.headIndex;
+        };
+
+        this.getTabBodyIndex = function () {
+            return ++this.bodyIndex;
+        };
+    }
+
+    ngTabsController.$inject = ['$scope'];
+
+    angular.module('tabs').directive('ngTabHead', ngTabHeadDirective);
+
+    function ngTabHeadDirective() {
+        return {
+            scope: false,
+            restrict: 'EAC',
+            require: '^ngTabs',
+            link: function link(scope, element, attributes, controller) {
+                var index = controller.getTabHeadIndex();
+                var value = attributes.ngTabHead;
+                var active = /[-*\/%^=!<>&|]/.test(value) ? scope.$eval(value) : !!value;
+
+                scope.tabs.index = scope.tabs.index || (active ? index : null);
+
+                element.bind('click', function () {
+                    scope.tabs.index = index;
+                    scope.$$phase || scope.$apply();
+                });
+
+                scope.$watch('tabs.index', function () {
+                    element.toggleClass('active', scope.tabs.index === index);
+                });
+            }
+        };
+    }
+
+    angular.module('tabs').directive('ngTabBody', ngTabBodyDirective);
+
+    function ngTabBodyDirective() {
+        return {
+            scope: false,
+            restrict: 'EAC',
+            require: '^ngTabs',
+            link: function link(scope, element, attributes, controller) {
+                var index = controller.getTabBodyIndex();
+
+                scope.$watch('tabs.index', function () {
+                    element.toggleClass(attributes.ngTabBody + ' active', scope.tabs.index === index);
+                });
+            }
+        };
+    }
+})(angular);
 'use strict';
 
 var JsonDB = function JsonDB($resource) {
@@ -7,6 +93,7 @@ var JsonDB = function JsonDB($resource) {
 		tables: $resource('/admin/tables'),
 		createTable: $resource('/admin/tables'),
 		table: $resource('/admin/tables/:table'),
+		updateTableConfig: $resource('/admin/tables/:table/saveconfig'),
 		saveTable: $resource('/admin/tables')
 	};
 };
@@ -75,9 +162,10 @@ Components.Semantic.DeleteButton = function () {
 		template: '<button class="ui button" ng-click="action()"><i class="remove icon"></i> {{text}}</button>'
 	};
 };
-"use strict";
+'use strict';
 
 var FieldTypes = FieldTypes || {};
+var colWidth = 'sixteen';
 
 FieldTypes.FieldTypes = function ($compile) {
 	var link = function postLink(scope, iElement, iAttrs) {
@@ -99,7 +187,7 @@ FieldTypes.FieldTypes = function ($compile) {
 FieldTypes.IntegerDir = function () {
 	"use strict";
 
-	var template = "\n\n\t<div class=\"six wide field\">\n\t\t\t\t<label>{{col.key}}</label>\n\t\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"...\">\n\t\t\t</div>\n\t\t";
+	var template = '\n\n\t<div class="' + colWidth + ' wide field">\n\t\t\t\t<label>{{col.key}}</label>\n\t\t\t\t<input type="text" ng-model="col.value" placeholder="...">\n\t\t\t</div>\n\t\t';
 	return {
 		replace: true,
 		restrict: 'E',
@@ -110,7 +198,7 @@ FieldTypes.IntegerDir = function () {
 FieldTypes.StringDir = function () {
 	"use strict";
 
-	var template = "\n\t\t<div class=\"six wide field\">\n\t\t\t<label>{{col.key}}</label>\n\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"...\">\n\t\t</div>\n\t\t\t";
+	var template = '\n\t\t<div class="' + colWidth + ' wide field">\n\t\t\t<label>{{col.key}}</label>\n\t\t\t<input type="text" ng-model="col.value" placeholder="...">\n\t\t</div>\n\t\t\t';
 	return {
 		replace: true,
 		restrict: 'E',
@@ -121,7 +209,7 @@ FieldTypes.StringDir = function () {
 FieldTypes.BooleanDir = function () {
 	"use strict";
 
-	var template = "\n\t\t\t<div class=\"six wide field\">\n\t\t\t\t<div class=\"ui toggle checkbox\">\n\t\t\t\t\t<label>{{col.key}}</label>\n\t\t\t\t\t<input type=\"checkbox\" ng-model=\"col.value\" tabindex=\"0\" class=\"hidden\">\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t";
+	var template = '\n\t\t\t<div class="' + colWidth + ' wide field">\n\t\t\t\t<div class="ui toggle checkbox">\n\t\t\t\t\t<label>{{col.key}}</label>\n\t\t\t\t\t<input type="checkbox" ng-model="col.value" tabindex="0" class="hidden">\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t';
 	return {
 		replace: true,
 		restrict: 'E',
@@ -139,7 +227,7 @@ FieldTypes.BooleanDir = function () {
 FieldTypes.UrlDir = function () {
 	"use strict";
 
-	var template = "\n\t\t<div class=\"six wide field\">\n\t\t\t<label>{{col.key}}</label>\n\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"...\">\n\t\t</div>\n\t\t\t";
+	var template = '\n\t\t<div class="' + colWidth + ' wide field">\n\t\t\t<label>{{col.key}}</label>\n\t\t\t<input type="text" ng-model="col.value" placeholder="...">\n\t\t</div>\n\t\t\t';
 	return {
 		replace: true,
 		restrict: 'E',
@@ -150,7 +238,7 @@ FieldTypes.UrlDir = function () {
 FieldTypes.TextDir = function () {
 	"use strict";
 
-	var template = "\n\t\t\t<div class=\"six wide field\">\n\t\t\t\t<label>{{col.key}}</label>\n\t\t\t\t<textarea rows=\"4\" ng-model=\"col.value\"></textarea>\n\t\t\t</div>\n\t";
+	var template = '\n\t\t\t<div class="' + colWidth + ' wide field">\n\t\t\t\t<label>{{col.key}}</label>\n\t\t\t\t<textarea rows="4" ng-model="col.value"></textarea>\n\t\t\t</div>\n\t';
 	return {
 		replace: true,
 		restrict: 'E',
@@ -161,7 +249,7 @@ FieldTypes.TextDir = function () {
 FieldTypes.DateDir = function () {
 	"use strict";
 
-	var template = "\n\t\t<div class=\"six wide field\">\n\t\t\t<label>{{col.key}}</label>\n\t\t\t<input type=\"text\" ng-model=\"col.value\" placeholder=\"...\">\n\t\t</div>\n\t\t\t";
+	var template = '\n\t\t<div class="' + colWidth + ' wide field">\n\t\t\t<label>{{col.key}}</label>\n\t\t\t<input type="text" ng-model="col.value" placeholder="...">\n\t\t</div>\n\t\t\t';
 	return {
 		replace: true,
 		restrict: 'E',
@@ -239,6 +327,10 @@ Tekpub.Bootstrap.BreadCrumbs = function ($routeParams) {
 var MainController = function MainController($scope, $routeParams, JsonDB) {
 	"use strict";
 
+	$scope.loading = true;
+
+	$scope.fieldTypes = ['Integer', 'String', 'Boolean', 'Url', 'Text', 'Date'];
+
 	var directives = {
 		Integer: {
 			template: '<integer-dir value="value"/>'
@@ -261,60 +353,47 @@ var MainController = function MainController($scope, $routeParams, JsonDB) {
 		}
 	};
 
-	/*var directives = [
-  {
-  template: '<integer-dir data="data"/>',
-  data: {
-  value: 'qwerty'
-  }
-  }, {
-  template: '<directive-two data="data"/>',
-  data: {
-  message: true
-  }
-  }, {
-  template: '<directive-thr data="data"/>',
-  data: {
-  message: 126
-  }
-  }
-  ];*/
 	$scope.directives = directives;
 };
-'use strict';
+"use strict";
 
 var TableController = function TableController($scope, $routeParams, JsonDB) {
+	$scope.$parent.loading = true;
+	$scope.notFound = false;
 	$scope.tableName = $routeParams.table;
+	$scope.table = [];
+	$scope.configs = [];
 
-	$scope.fieldTypes = ['Integer', 'String', 'Boolean', 'Url', 'Text', 'Date'];
-
-	var table = JsonDB.table.get({ table: $scope.tableName }, function (data) {
+	function getTable() {
 		"use strict";
 
-		$scope.table = table.table;
+		var table = JsonDB.table;
 
-		$scope.configs = [];
+		table.get({ table: $scope.tableName }, function (data) {
+			"use strict";
 
-		_.each(table.config, function (value, key) {
-			$scope.configs.push({
-				key: key,
-				value: value
+			if (data.notFound) {
+				$scope.notFound = data.notFound;
+			}
+
+			$scope.table = data.table;
+
+			_.each(data.config, function (value, key) {
+				$scope.configs.push({
+					key: key,
+					value: value
+				});
 			});
+
+			$scope.initTab = function () {
+				angular.element('.menu .item').tab();
+			};
+
+			$scope.$parent.loading = false;
 		});
+	}
 
-		/*angular.element('.horizontal-scroll').niceScroll({
-   cursorcolor:        '#0c64d4',
-   cursoropacitymin:   1,
-   cursorwidth:        10,
-   cursorborder:       'none',
-   cursorborderradius: 0,
-   cursorfixedheight:  90
-   });*/
-
-		$scope.initTab = function () {
-			angular.element('.menu .item').tab();
-		};
-	});
+	getTable();
 
 	$scope.save = function () {
 		"use strict";
@@ -325,8 +404,22 @@ var TableController = function TableController($scope, $routeParams, JsonDB) {
 		"use strict";
 
 		event.preventDefault();
-		console.log($scope.configs);
-		return false;
+
+		angular.forEach($scope.configs, function (value) {
+			console.log(value.key);
+		});
+
+		/*let config = new JsonDB.updateTableConfig({
+   table: $scope.tableName
+   });
+  		 console.log(config.$save());*/
+
+		/*config.$update(function (u, putResponseHeaders) {
+   console.log(u);
+   });*/
+
+		//getTable();
+
 		//window.location.reload();
 	};
 
@@ -344,6 +437,15 @@ var TableController = function TableController($scope, $routeParams, JsonDB) {
 		});
 
 		$scope.table.push(newTr);
+	};
+
+	$scope.removeRow = function (event, row) {
+		"use strict";
+
+		event.preventDefault();
+		$scope.table.splice($scope.table.indexOf(row), 1);
+
+		$scope.initTab();
 	};
 
 	$scope.showSettings = function (event) {
@@ -411,16 +513,35 @@ var TableController = function TableController($scope, $routeParams, JsonDB) {
 "use strict";
 
 var TablesController = function TablesController($scope, $routeParams, JsonDB) {
+	$scope.$parent.loading = true;
 
-	$scope.tables = JsonDB.tables.query();
-	$scope.addTable = function () {
+	$scope.tables = JsonDB.tables.query({}, true, function () {
 		"use strict";
+		$scope.$parent.loading = false;
+	});
+
+	$scope.newTableNameError = false;
+
+	$scope.newTableName = '';
+
+	$scope.addTable = function (event) {
+		"use strict";
+		event.preventDefault();
+
 		var newTableName = $scope.newTableName;
 
-		var newDb = new JsonDB.createTable({ createTable: newTableName });
-		newDb.$save();
+		if (newTableName === '') {
+			$scope.newTableNameError = true;
+		} else {
+			$scope.newTableNameError = false;
+		}
 
-		$scope.tables.push(newTableName);
+		if (!$scope.newTableNameError) {
+			/*var newDb = new JsonDB.createTable({ createTable: newTableName });
+    newDb.$save();*/
+			$scope.tables.push(newTableName);
+			$scope.newTableName = '';
+		}
 	};
 
 	$scope.removeTable = function (db) {
@@ -457,7 +578,7 @@ var Router = function Router($routeProvider, $locationProvider) {
 };
 'use strict';
 
-var App = angular.module('Application', ['ngResource', 'ngRoute'], function ($httpProvider) {
+var App = angular.module('Application', ['ngResource', 'ngRoute', 'tabs'], function ($httpProvider) {
 
 	/*$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
   $httpProvider.defaults.transformRequest = [
