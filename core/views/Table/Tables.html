@@ -1,38 +1,9 @@
-<div class="ui raised segment">
-	<h2 class="ui header">
-		Таблицы
-	</h2>
-</div>
-	<table class="ui celled table">
-		<thead>
-		<tr>
-			<th>Название таблицы</th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr ng-repeat="table in tables">
-			<td class="selectable">
-				<a href="/admin/tables/[[ table ]]">
-					<i class="table icon"></i>	[[ table ]]
-				</a>
-			</td>
-		</tr>
-		</tbody>
-	</table>
+<h1 class="md-display-3">Таблицы</h1>
 
-<div class="ui">
-	<div class="ui form" ng-class="newTableNameError ? 'error' : ''">
-		<div class="two fields">
-			<div class="field" ng-class="newTableNameError ? 'error' : ''">
-				<input placeholder="Название таблицы" ng-model="newTableName" type="text">
-			</div>
-			<div class="field">
-				<div class="ui submit floated right button" ng-click="addTable($event)">Добавить</div>
-			</div>
-		</div>
-		<div class="ui error message">
-			<div class="header">Ошибка</div>
-			<p>Название таблицы не может быть пустым</p>
-		</div>
-	</div>
-</div>
+<md-list-item class="secondary-button-padding" ng-click="redirectTo($event, table)" ng-repeat="table in tables">
+	<p>
+		<md-icon md-svg-icon="image:gridOn"></md-icon>
+		[[ table ]]
+	</p>
+	<md-button class="md-secondary" ng-click="doSecondaryAction($event)">Редактировать</md-button>
+</md-list-item>

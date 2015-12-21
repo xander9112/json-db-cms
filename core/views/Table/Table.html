@@ -1,11 +1,49 @@
-<div class="ui massive negative message" ng-show="notFound">
-	<div class="header">
-		[[ notFound ]]
-	</div>
-</div>
+<h1 class="md-display-3" ng-show="notFound">[[ notFound ]]</h1>
 
 <div ng-hide="notFound">
-	<div class="ui grid">
+	<div layout="row">
+		<div flex="100">
+			<md-content layout-padding>
+				<md-tabs md-selected="0" md-border-bottom md-dynamic-height>
+					<md-tab ng-repeat="row in table"
+					        ng-disabled=""
+					        label="Строка - [[$index]]">
+						<div class="tab[[$index%4]]">
+							<div>
+								<form name="rowForm-[[$index]]">
+									<div layout="row">
+										<div flex="20" flex-offset="80">
+											<md-button class="md-primary md-raised" ng-click="removeRow($event, row)"
+											           ng-disabled="table.length <= 1">Удалить
+											</md-button>
+											<md-button class="md-primary md-raised" ng-click="addItem($event)">
+												Добавить
+											</md-button>
+											<md-button class="md-primary md-raised" ng-click="save($event)">
+												Сохранить
+											</md-button>
+										</div>
+									</div>
+									<div ng-repeat="col in row" >
+										<field-types
+												directive="directives['[[ col.fieldType ]]']"
+												value="col">
+										</field-types>
+									</div>
+									<!--<md-input-container class="md-block" ng-if="col.fieldType != 'Date'">
+
+									</md-input-container>-->
+
+								</form>
+							</div>
+						</div>
+					</md-tab>
+				</md-tabs>
+				<!--<md-divider ng-if="!$last"></md-divider>-->
+			</md-content>
+		</div>
+	</div>
+	<!--<div class="ui grid">
 		<div class="four column row">
 			<div class="left floated column">
 				<div class="ui animated fade button" tabindex="0" ng-click="showSettings($event)">
@@ -37,7 +75,8 @@
 										</select>
 									</div>
 									<div class="field">
-										<button class="ui red basic icon button" ng-click="removeRowConfig($event, config)">
+										<button class="ui red basic icon button"
+										        ng-click="removeRowConfig($event, config)">
 											<i class="close icon"></i>
 										</button>
 									</div>
@@ -58,7 +97,7 @@
 			</div>
 			<div class="right floated column">
 				<div class="ui buttons">
-					<!--<button class="ui button">Добавить строку</button>-->
+					&lt;!&ndash;<button class="ui button">Добавить строку</button>&ndash;&gt;
 					<div class="ui positive animated fade button" tabindex="0" ng-click="addItem($event)">
 						<div class="visible content">
 							Добавить строку
@@ -76,46 +115,30 @@
 							<i class="icon save"></i>
 						</div>
 					</div>
-					<!--<button class="ui positive button">Сохранить</button>-->
+					&lt;!&ndash;<button class="ui positive button">Сохранить</button>&ndash;&gt;
 				</div>
 			</div>
 		</div>
-	</div>
-	<div ng-tabs class="table-tabs">
-		<div class="ui top attached tabular menu">
-			<a
-							ng-tab-head="[[$index == 0 ? 'active' : '']]"
-							class="item"
-							ng-repeat="row in table"
-							ng-class="$index == 0 ? 'active' : ''"
-							data-tab="row[[$index]]">Строка - [[$index]]</a>
-		</div>
-		<div
-						ng-tab-body="[[$index == 0 ? 'active' : '']]"
-						ng-repeat="row in table"
-						repeat-done="initTab()"
-						class="ui bottom attached tab segment"
-						ng-class="$index == 0 ? 'active' : ''">
-
-			<div class="ui grid">
-				<div class="four column row">
-					<div class="left floated column">
-						<form class="ui form">
-							<field-types
-											class="fields"
-											ng-repeat="col in row"
-											directive="directives['[[ col.fieldType ]]']"
-											value="col"></field-types>
-						</form>
-					</div>
-					<div class="right floated column">
-						<button class="ui red basic button" ng-click="removeRow($event, row)">
-							<i class="remove icon"></i>
-							Удалить
-						</button>
-					</div>
+	</div>-->
+	<!--<div ng-tabs class="table-tabs">
+		<div class="ui grid">
+			<div class="four column row">
+				<div class="left floated column">
+					<form class="ui form">
+						<field-types
+								class="fields"
+								ng-repeat="col in row"
+								directive="directives['[[ col.fieldType ]]']"
+								value="col"></field-types>
+					</form>
+				</div>
+				<div class="right floated column">
+					<button class="ui red basic button" ng-click="removeRow($event, row)">
+						<i class="remove icon"></i>
+						Удалить
+					</button>
 				</div>
 			</div>
 		</div>
-	</div>
+	</div>-->
 </div>

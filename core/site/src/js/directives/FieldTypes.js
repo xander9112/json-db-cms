@@ -3,11 +3,10 @@ var colWidth = 'sixteen';
 
 FieldTypes.FieldTypes = function ($compile) {
 	var link = function postLink (scope, iElement, iAttrs) {
-		var directive = scope.$eval(iAttrs.directive);
-		scope.value = iAttrs.value;
 
-		/*angular.element(iElement).parent().append(directive.template)
-		angular.element(iElement).index();*/
+		var directive = scope.$eval(iAttrs.directive);
+
+		scope.value = iAttrs.value;
 
 		iElement.html(directive.template);
 		$compile(iElement.contents())(scope);
@@ -29,7 +28,7 @@ FieldTypes.IntegerDir = function () {
 			</div>
 		`;
 	return {
-		replace: true,
+		replace:  true,
 		restrict: 'E',
 		template: template
 	};
@@ -45,7 +44,7 @@ FieldTypes.StringDir = function () {
 		</div>
 			`;
 	return {
-		replace: true,
+		replace:  true,
 		restrict: 'E',
 		template: template
 	};
@@ -55,23 +54,17 @@ FieldTypes.BooleanDir = function () {
 	"use strict";
 
 	var template = `
-			<div class="${colWidth} wide field">
-				<div class="ui toggle checkbox">
-					<label>{{col.key}}</label>
-					<input type="checkbox" ng-model="col.value" tabindex="0" class="hidden">
-				</div>
-			</div>
+			<md-checkbox ng-model="col.value" aria-label="{{col.key}}">
+				{{col.key}}
+			</md-checkbox>
 		`;
 	return {
-		replace: true,
+		replace:  true,
 		restrict: 'E',
 		template: template,
-		link:     function (scope, iElement, iAttrs) {
-			$('.ui.checkbox').checkbox();
-
-			angular.element(iElement).find('input').on('change', function () {
-				scope.col.value = $(this).prop('checked');
-			});
+		scope:    '@',
+		link:     function (scope) {
+			console.log(scope);
 		}
 	};
 };
@@ -86,7 +79,7 @@ FieldTypes.UrlDir = function () {
 		</div>
 			`;
 	return {
-		replace: true,
+		replace:  true,
 		restrict: 'E',
 		template: template
 	};
@@ -102,7 +95,7 @@ FieldTypes.TextDir = function () {
 			</div>
 	`;
 	return {
-		replace: true,
+		replace:  true,
 		restrict: 'E',
 		template: template
 	};
@@ -118,7 +111,7 @@ FieldTypes.DateDir = function () {
 		</div>
 			`;
 	return {
-		replace: true,
+		replace:  true,
 		restrict: 'E',
 		template: template
 	};

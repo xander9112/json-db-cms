@@ -15,4 +15,14 @@ class Admin extends Controller
             'name' => 'Главная'
         ));
     }
+
+    /**
+     * @Route("/admin/testpage")
+     */
+    public function testpage()
+    {
+        return $this->render('index.twig', array(
+            'name' => 'Главная'
+        ));
+    }
 }

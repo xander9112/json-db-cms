@@ -1,89 +1,3 @@
-/**
- * The angular tabs module
- * @author: nerv
- * @version: 0.2.5, 2012-08-25
- */
-'use strict';
-
-(function (angular) {
-
-    'use strict';
-
-    angular.module('tabs', []);
-
-    angular.module('tabs').directive('ngTabs', ngTabsDirective);
-
-    function ngTabsDirective() {
-        return {
-            scope: true,
-            restrict: 'EAC',
-            controller: ngTabsController
-        };
-    }
-
-    function ngTabsController($scope) {
-        $scope.tabs = {
-            index: 0,
-            count: 0
-        };
-
-        this.headIndex = 0;
-        this.bodyIndex = 0;
-
-        this.getTabHeadIndex = function () {
-            return $scope.tabs.count = ++this.headIndex;
-        };
-
-        this.getTabBodyIndex = function () {
-            return ++this.bodyIndex;
-        };
-    }
-
-    ngTabsController.$inject = ['$scope'];
-
-    angular.module('tabs').directive('ngTabHead', ngTabHeadDirective);
-
-    function ngTabHeadDirective() {
-        return {
-            scope: false,
-            restrict: 'EAC',
-            require: '^ngTabs',
-            link: function link(scope, element, attributes, controller) {
-                var index = controller.getTabHeadIndex();
-                var value = attributes.ngTabHead;
-                var active = /[-*\/%^=!<>&|]/.test(value) ? scope.$eval(value) : !!value;
-
-                scope.tabs.index = scope.tabs.index || (active ? index : null);
-
-                element.bind('click', function () {
-                    scope.tabs.index = index;
-                    scope.$$phase || scope.$apply();
-                });
-
-                scope.$watch('tabs.index', function () {
-                    element.toggleClass('active', scope.tabs.index === index);
-                });
-            }
-        };
-    }
-
-    angular.module('tabs').directive('ngTabBody', ngTabBodyDirective);
-
-    function ngTabBodyDirective() {
-        return {
-            scope: false,
-            restrict: 'EAC',
-            require: '^ngTabs',
-            link: function link(scope, element, attributes, controller) {
-                var index = controller.getTabBodyIndex();
-
-                scope.$watch('tabs.index', function () {
-                    element.toggleClass(attributes.ngTabBody + ' active', scope.tabs.index === index);
-                });
-            }
-        };
-    }
-})(angular);
 'use strict';
 
 var JsonDB = function JsonDB($resource) {
@@ -99,81 +13,15 @@ var JsonDB = function JsonDB($resource) {
 };
 'use strict';
 
-var Components = Components || {};
-Components.Semantic = Components.Semantic || {};
-
-Components.Semantic.AddButton = function () {
-	"use strict";
-
-	return {
-		replace: true,
-		transclude: true,
-		scope: {
-			text: '@',
-			action: '&'
-		},
-		template: '<button class="ui button" ng-click="action()">{{text}}</button>'
-	};
-};
-'use strict';
-
-var Components = Components || {};
-Components.Semantic = Components.Semantic || {};
-
-Components.Semantic.BreadCrumbs = function ($routeParams) {
-	"use strict";
-
-	return {
-		replace: true,
-		transclude: true,
-		controller: function controller($scope) {
-			var rootUrl = '#/';
-			$scope.crumbs = [{ url: rootUrl, text: 'Home' }];
-			var runningUrl = rootUrl;
-
-			for (var param in $routeParams) {
-				runningUrl += $routeParams[param];
-				$scope.crumbs.push({ url: runningUrl, text: $routeParams[param] });
-			}
-
-			$scope.notLast = function (crumb) {
-				return crumb !== _.last($scope.crumbs);
-			};
-		},
-		template: '\n\t\t\t<div class="ui piled segment">\n\t\t\t\t<div class="ui breadcrumb">\n\t\t\t\t\t<span ng-repeat="crumb in crumbs">\n\t\t\t\t\t\t<a href="{{crumb.url}}" class="section" ng-show="notLast(crumb)">{{crumb.text}}</a>\n\t\t\t\t\t\t<div class="active section" ng-hide="notLast(crumb)">{{crumb.text}}</div>\n\t\t\t\t\t\t<i class="right angle icon divider" ng-show="notLast(crumb)"></i>\n\t\t\t\t\t</span>\n\t\t\t\t</div>\n\t\t\t</div>'
-	};
-};
-'use strict';
-
-var Components = Components || {};
-Components.Semantic = Components.Semantic || {};
-
-Components.Semantic.DeleteButton = function () {
-	"use strict";
-
-	return {
-		replace: true,
-		transclude: true,
-		scope: {
-			text: '@',
-			action: '&',
-			comment: '='
-		},
-		template: '<button class="ui button" ng-click="action()"><i class="remove icon"></i> {{text}}</button>'
-	};
-};
-'use strict';
-
 var FieldTypes = FieldTypes || {};
 var colWidth = 'sixteen';
 
 FieldTypes.FieldTypes = function ($compile) {
 	var link = function postLink(scope, iElement, iAttrs) {
-		var directive = scope.$eval(iAttrs.directive);
-		scope.value = iAttrs.value;
 
-		/*angular.element(iElement).parent().append(directive.template)
-  angular.element(iElement).index();*/
+		var directive = scope.$eval(iAttrs.directive);
+
+		scope.value = iAttrs.value;
 
 		iElement.html(directive.template);
 		$compile(iElement.contents())(scope);
@@ -209,17 +57,14 @@ FieldTypes.StringDir = function () {
 FieldTypes.BooleanDir = function () {
 	"use strict";
 
-	var template = '\n\t\t\t<div class="' + colWidth + ' wide field">\n\t\t\t\t<div class="ui toggle checkbox">\n\t\t\t\t\t<label>{{col.key}}</label>\n\t\t\t\t\t<input type="checkbox" ng-model="col.value" tabindex="0" class="hidden">\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t';
+	var template = '\n\t\t\t<md-checkbox ng-model="col.value" aria-label="{{col.key}}">\n\t\t\t\t{{col.key}}\n\t\t\t</md-checkbox>\n\t\t';
 	return {
 		replace: true,
 		restrict: 'E',
 		template: template,
-		link: function link(scope, iElement, iAttrs) {
-			$('.ui.checkbox').checkbox();
-
-			angular.element(iElement).find('input').on('change', function () {
-				scope.col.value = $(this).prop('checked');
-			});
+		scope: '@',
+		link: function link(scope) {
+			console.log(scope);
 		}
 	};
 };
@@ -258,98 +103,57 @@ FieldTypes.DateDir = function () {
 };
 "use strict";
 
-/*
-var Tekpub = Tekpub || {};
-Tekpub.Bootstrap = {};
-
-Tekpub.Bootstrap.DeleteButton = function () {
-	"use strict";
-
-	return {
-		replace:    true,
-		transclude: true,
-		scope:      {
-			text:    '@',
-			action:  '&',
-			comment: '='
-		},
-		template:   '<button class="ui button" ng-click="action()"><i class="remove icon"></i> {{text}}</button>'
-	}
+var repeatDone = function repeatDone() {
+	return function (scope, element, attrs) {
+		if (scope.$last) {
+			// all are rendered
+			scope.$eval(attrs.repeatDone);
+		}
+	};
 };
+"use strict";
 
-Tekpub.Bootstrap.AddButton = function () {
+var MainController = function MainController($scope, $mdSidenav, JsonDB) {
 	"use strict";
 
-	return {
-		replace:    true,
-		transclude: true,
-		scope:      {
-			text:   '@',
-			action: '&'
-		},
-		template:   '<button class="ui button" ng-click="action()">{{text}}</button>'
-	}
-};
+	$scope.toggleRight = function () {
+		$mdSidenav('left').toggle();
+	};
 
-Tekpub.Bootstrap.BreadCrumbs = function ($routeParams) {
-	"use strict";
+	$scope.menu = {};
+	$scope.menu.pages = [{
+		"state": "admin", "discription": "Главная"
+	}, {
+		"state": "admin/tables", "discription": "Таблицы"
+	}, {
+		"state": "admin/testPage", "discription": "Тестовая страница"
+	}];
 
-	return {
-		replace:    true,
-		transclude: true,
-		controller: function ($scope) {
-			var rootUrl = '#/';
-			$scope.crumbs = [{ url: rootUrl, text: 'Database' }];
-			var runningUrl = rootUrl;
-
-			for (var param in $routeParams) {
-				runningUrl += $routeParams[param];
-				$scope.crumbs.push({ url: runningUrl, text: $routeParams[param] })
-			}
-
-			$scope.notLast = function (crumb) {
-				return crumb !== _.last($scope.crumbs);
-			}
-		},
-		template:   `
-			<div class="ui breadcrumb">
-				<span ng-repeat="crumb in crumbs">
-					<a href="{{crumb.url}}" class="section" ng-show="notLast(crumb)">{{crumb.text}}</a>
-					<div class="active section" ng-hide="notLast(crumb)">{{crumb.text}}</div>
-					<i class="right angle icon divider" ng-show="notLast(crumb)"></i>
-				</span>
-			</div>`
-	}
-};
-*/
-'use strict';
-
-var MainController = function MainController($scope, $routeParams, JsonDB) {
-	"use strict";
-
-	$scope.loading = true;
+	$scope.close = function () {
+		$mdSidenav('left').close();
+	};
 
 	$scope.fieldTypes = ['Integer', 'String', 'Boolean', 'Url', 'Text', 'Date'];
 
 	var directives = {
 		Integer: {
-			template: '<integer-dir value="value"/>'
+			template: '<md-input-container class="md-block"><label>[[col.key]]</label><input ng-model="col.value" min="0" type="number"></md-input-container>'
 		},
 		String: {
-			template: '<string-dir value="value"/>'
+			template: '<md-input-container class="md-block"><label>[[col.key]]</label><input ng-model="col.value" type="text"></md-input-container>'
 
 		},
 		Boolean: {
-			template: '<boolean-dir value="value"/>'
+			template: '<md-input-container class="md-block"><md-switch ng-model="col.value" aria-label="[[col.key]]">[[col.key]]</md-switch></md-input-container>'
 		},
 		Url: {
-			template: '<url-dir value="value"/>'
+			template: '<md-input-container class="md-block"><url-dir value="value"/></md-input-container>'
 		},
 		Text: {
-			template: '<text-dir value="value"/>'
+			template: '<md-input-container class="md-block"><label>[[ col.key ]]</label><textarea ng-model="col.value" columns="1" md-maxlength="1500" rows="5"></textarea></md-input-container>'
 		},
 		Date: {
-			template: '<date-dir value="value"/>'
+			template: '<md-datepicker ng-model="col.value" md-placeholder="Выберите дату"></md-datepicker>'
 		}
 	};
 
@@ -357,10 +161,11 @@ var MainController = function MainController($scope, $routeParams, JsonDB) {
 };
 "use strict";
 
-var TableController = function TableController($scope, $routeParams, JsonDB) {
+var TableController = function TableController($scope, $state, JsonDB) {
+
 	$scope.$parent.loading = true;
 	$scope.notFound = false;
-	$scope.tableName = $routeParams.table;
+	$scope.tableName = $state.params.table;
 	$scope.table = [];
 	$scope.configs = [];
 
@@ -378,18 +183,20 @@ var TableController = function TableController($scope, $routeParams, JsonDB) {
 
 			$scope.table = data.table;
 
+			angular.forEach($scope.table, function (value, key) {
+				angular.forEach(value, function (value, key) {
+					if (value.fieldType === 'Date') {
+						value.value = new Date(Date.parse(value.value));
+					}
+				});
+			});
+
 			_.each(data.config, function (value, key) {
 				$scope.configs.push({
 					key: key,
 					value: value
 				});
 			});
-
-			$scope.initTab = function () {
-				angular.element('.menu .item').tab();
-			};
-
-			$scope.$parent.loading = false;
 		});
 	}
 
@@ -512,8 +319,14 @@ var TableController = function TableController($scope, $routeParams, JsonDB) {
 };
 "use strict";
 
-var TablesController = function TablesController($scope, $routeParams, JsonDB) {
-	$scope.$parent.loading = true;
+var TablesController = function TablesController($scope, JsonDB, $state) {
+
+	$scope.redirectTo = function (event, url) {
+		"use strict";
+		$state.go("admin/tables/:table", {
+			table: url
+		});
+	};
 
 	$scope.tables = JsonDB.tables.query({}, true, function () {
 		"use strict";
@@ -552,100 +365,212 @@ var TablesController = function TablesController($scope, $routeParams, JsonDB) {
 		//}
 	};
 };
-'use strict';
+"use strict";
 
-var Router = function Router($routeProvider, $locationProvider) {
-	"use strict";
-	$routeProvider.when('/admin', {
-		templateUrl: '/core/views/MainPage.html'
-	}).when('/admin/tables', {
-		templateUrl: '/core/views/Table/Tables.html',
-		controller: 'TablesController'
-	}).when('/admin/tables/:table', {
-		templateUrl: '/core/views/Table/Table.html',
-		controller: 'TableController'
-	}).when('/admin/tables/:table/config', {
-		templateUrl: '/core/views/Table/config.html',
-		controller: 'TableController'
-	}).when('/admin/tables/:table/create', {
-		templateUrl: '/core/views/Table/Create.html',
-		controller: 'TableController'
-	}).otherwise({
-		templateUrl: '/core/views/ErrorPage.html'
+var TestController = function TestController($scope, JsonDB, $state, cfpLoadingBar) {
+	var folderName = '/core/data/images';
+
+	$scope.tiles = buildGridModel({
+		icon: "",
+		title: "Svg-",
+		background: ""
 	});
-
-	$locationProvider.html5Mode(true);
+	function buildGridModel(tileTmpl) {
+		var it,
+		    results = [];
+		for (var j = 0; j < 24; j++) {
+			it = angular.extend({}, tileTmpl);
+			it.icon = folderName + "/1(" + (it.icon + (j + 1)) + ").jpg";
+			it.title = it.title + (j + 1);
+			it.span = { row: 1, col: 1 };
+			switch (j + 1) {
+				case 1:
+					it.background = "red";
+					it.span.row = it.span.col = 2;
+					break;
+				case 2:
+					it.background = "green";
+					break;
+				case 3:
+					it.background = "darkBlue";
+					break;
+				case 4:
+					it.background = "blue";
+					it.span.col = 2;
+					break;
+				case 5:
+					it.background = "yellow";
+					it.span.row = it.span.col = 2;
+					break;
+				case 6:
+					it.background = "pink";
+					break;
+				case 7:
+					it.background = "darkBlue";
+					break;
+				case 8:
+					it.background = "purple";
+					break;
+				case 9:
+					it.background = "deepBlue";
+					break;
+				case 10:
+					it.background = "lightPurple";
+					break;
+				case 11:
+					it.background = "yellow";
+					break;
+			}
+			results.push(it);
+		}
+		return results;
+	}
 };
 'use strict';
 
-var App = angular.module('Application', ['ngResource', 'ngRoute', 'tabs'], function ($httpProvider) {
+var Router = function Router($stateProvider, $urlRouterProvider, $locationProvider) {
+	"use strict";
+	var templateFolder = '/core/views';
 
-	/*$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
-  $httpProvider.defaults.transformRequest = [
-  function (data) {
-  var param = function (obj) {
-  var query = '';
-  var name, value, fullSubName, subValue, innerObj, i;
- 
-  for (name in obj) {
-  value = obj[name];
- 
-  if (value instanceof Array) {
-  for (i = 0; i < value.length; ++i) {
-  subValue = value[i];
-  fullSubName = name + '[' + i + ']';
-  innerObj = {};
-  innerObj[fullSubName] = subValue;
-  query += param(innerObj) + '&';
-  }
-  }
-  else if (value instanceof Object) {
-  for (var subName in value) {
-  if (value.hasOwnProperty(subName) && subName !== '$$hashKey') {
-  subValue = value[subName];
-  fullSubName = name + '[' + subName + ']';
-  innerObj = {};
-  innerObj[fullSubName] = subValue;
-  query += param(innerObj) + '&';
-  }
-  }
-  }
-  else {
-  query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
-  }
-  }
- 
-  return query.length ? query.substr(0, query.length - 1) : query;
-  };
- 
-  return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
-  }
-  ];*/
+	$urlRouterProvider.otherwise('admin');
+	$locationProvider.html5Mode(true);
+	$stateProvider.state('admin', {
+		url: '/admin',
+		templateUrl: templateFolder + '/MainPage.html'
+	}).state('admin/tables', {
+		url: '/admin/tables',
+		templateUrl: templateFolder + '/Table/Tables.html',
+		controller: 'TablesController'
+	}).state('admin/tables/:table', {
+		url: '/admin/tables/:table',
+		templateUrl: templateFolder + '/Table/Table.html',
+		controller: 'TableController'
+	}).state('admin/tables/:table/config', {
+		url: '/admin/tables/:table/config',
+		templateUrl: templateFolder + '/Table/config.html',
+		controller: 'TableController'
+	}).state('admin/tables/:table/create', {
+		url: '/admin/tables/:table/create',
+		templateUrl: templateFolder + '/Table/Create.html',
+		controller: 'TableController'
+	}).state('ErrorPage', {
+		templateUrl: templateFolder + '/ErrorPage.html'
+	}).state('admin/testPage', {
+		url: '/admin/testpage',
+		templateUrl: templateFolder + '/TestPage.html',
+		controller: 'TestController'
+	});
+};
+
+/*.otherwise({
+ templateUrl: `${templateFolder}/ErrorPage.html`
+ })*/
+'use strict';
+
+var Dependencies = ['ngResource', 'ui.router', 'ngStorage', 'ngMaterial', 'chieffancypants.loadingBar'];
+
+var interpolateProvider = function interpolateProvider($interpolateProvider) {
+	"use strict";
+
+	$interpolateProvider.startSymbol('[[');
+	$interpolateProvider.endSymbol(']]');
+};
+
+var LocalStorageKeyPrefix = function LocalStorageKeyPrefix($localStorageProvider, $sessionStorageProvider) {
+	"use strict";
+
+	$localStorageProvider.setKeyPrefix('HB_');
+	$sessionStorageProvider.setKeyPrefix('HB_');
+};
+
+var StripTrailingSlashes = function StripTrailingSlashes($resourceProvider) {
+	"use strict";
+
+	// Don't strip trailing slashes from calculated URLs
+	//console.log($resourceProvider);
+	$resourceProvider.defaults.stripTrailingSlashes = false;
+};
+
+var mdThemingProvider = function mdThemingProvider($mdThemingProvider) {
+	"use strict";
+
+	$mdThemingProvider.theme('indigo').primaryPalette('blue-grey').accentPalette('blue');
+};
+
+var iconConfig = function iconConfig($mdIconProvider) {
+	"use strict";
+	var svgFolder = '/core/site/assets/svg-icons';
+
+	$mdIconProvider.iconSet('navigation:menu', svgFolder + '/navigation/ic_menu_24px.svg', 24).iconSet('image:gridOn', svgFolder + '/image/ic_grid_on_24px.svg', 24).defaultIconSet(svgFolder + '/core-icons.svg', 24);
+};
+
+var httpMethodInterceptor = function httpMethodInterceptor(httpMethodInterceptorProvider) {
+	httpMethodInterceptorProvider.whitelistLocalRequests();
+};
+'use strict';
+
+var App = angular.module('Application', Dependencies, function ($httpProvider) {
+	"use strict";
+	$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+	$httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+	$httpProvider.defaults.transformRequest = [function (data) {
+		var param = function param(obj) {
+			var query = '';
+			var name, value, fullSubName, subValue, innerObj, i;
+
+			for (name in obj) {
+				value = obj[name];
+
+				if (value instanceof Array) {
+					for (i = 0; i < value.length; ++i) {
+						subValue = value[i];
+						fullSubName = name + '[' + i + ']';
+						innerObj = {};
+						innerObj[fullSubName] = subValue;
+						query += param(innerObj) + '&';
+					}
+				} else if (value instanceof Object) {
+					for (var subName in value) {
+						if (value.hasOwnProperty(subName) && subName !== '$$hashKey') {
+							subValue = value[subName];
+							fullSubName = name + '[' + subName + ']';
+							innerObj = {};
+							innerObj[fullSubName] = subValue;
+							query += param(innerObj) + '&';
+						}
+					}
+				} else {
+					query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
+				}
+			}
+
+			return query.length ? query.substr(0, query.length - 1) : query;
+		};
+
+		return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
+	}];
 });
 
 App.config(Router);
 
-App.config(function ($interpolateProvider) {
-	$interpolateProvider.startSymbol('[[');
-	$interpolateProvider.endSymbol(']]');
-});
+App.config(LocalStorageKeyPrefix);
+App.config(StripTrailingSlashes);
+App.config(interpolateProvider);
+App.config(mdThemingProvider);
+App.config(iconConfig);
+//App.config(httpMethodInterceptor);
+App.config(['cfpLoadingBarProvider', function (cfpLoadingBarProvider) {
+	cfpLoadingBarProvider.spinnerTemplate = '<div class="g-page-loader"><md-progress-linear md-mode="indeterminate"></md-progress-linear></div>';
+}]);
+App.config(['cfpLoadingBarProvider', function (cfpLoadingBarProvider) {
+	cfpLoadingBarProvider.includeSpinner = true;
+}]);
+App.factory("JsonDB", JsonDB);
 
 App.controller('MainController', MainController);
 App.controller('TablesController', TablesController);
 App.controller('TableController', TableController);
-App.factory("JsonDB", JsonDB);
-
-App.directive('breadcrumbs', Components.Semantic.BreadCrumbs);
-
-App.directive('deleteButton', Components.Semantic.DeleteButton);
-App.directive('repeatDone', function () {
-	return function (scope, element, attrs) {
-		if (scope.$last) {
-			// all are rendered
-			scope.$eval(attrs.repeatDone);
-		}
-	};
-});
+App.controller('TestController', TestController);
 
 App.directive('integerDir', FieldTypes.IntegerDir);
 App.directive('stringDir', FieldTypes.StringDir);
@@ -656,5 +581,7 @@ App.directive('dateDir', FieldTypes.DateDir);
 
 App.directive('fieldTypes', FieldTypes.FieldTypes);
 
-App.directive('addButton', Components.Semantic.AddButton);
+//App.factory("$DB", DBFactory);
+
+App.directive('repeatDone', repeatDone);
 //# sourceMappingURL=app.js.map

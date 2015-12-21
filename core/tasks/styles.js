@@ -6,12 +6,14 @@ var csso = require('gulp-csso');
 var gulpif = require('gulp-if');
 
 var production = require('../gulpfile');
+var sass = require('gulp-sass');
 
 gulp.task('styles', function () {
 	return gulp.src([
-		'site/src/styles/**/*.less'
+		'bower_components/angular-material/angular-material.scss',
+		'site/src/styles/**/*'
 	])
-		.pipe(less())
+		.pipe(sass())
 		.pipe(autoprefixer({
 			browsers: ['last 2 versions'],
 			cascade:  false

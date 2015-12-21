@@ -1,5 +1,12 @@
-var TablesController = function ($scope, $routeParams, JsonDB) {
-	$scope.$parent.loading = true;
+var TablesController = function ($scope, JsonDB, $state) {
+
+
+	$scope.redirectTo = function (event, url) {
+		"use strict";
+		$state.go(`admin/tables/:table`, {
+			table: url
+		});
+	};
 
 	$scope.tables = JsonDB.tables.query({}, true, function () {
 		"use strict";

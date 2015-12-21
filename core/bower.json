@@ -1,0 +1,28 @@
+{
+  "name": "College",
+  "description": "AlexZander",
+  "main": "",
+  "authors": [
+    "Alexandr Furmanchuk <xander@mail.ru>"
+  ],
+  "license": "MIT",
+  "moduleType": [
+    "es6",
+    "node"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular-material": "~1.0.1"
+  },
+  "dependencies": {
+    "angular-http-loader": "~0.1.7",
+    "angular-loading-bar": "~0.8.0"
+  }
+}

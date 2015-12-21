@@ -1,7 +1,8 @@
-var TableController = function ($scope, $routeParams, JsonDB) {
+var TableController = function ($scope, $state, JsonDB) {
+
 	$scope.$parent.loading = true;
 	$scope.notFound = false;
-	$scope.tableName = $routeParams.table;
+	$scope.tableName = $state.params.table;
 	$scope.table = [];
 	$scope.configs = [];
 
@@ -17,8 +18,15 @@ var TableController = function ($scope, $routeParams, JsonDB) {
 				$scope.notFound = data.notFound;
 			}
 
-
 			$scope.table = data.table;
+
+			angular.forEach($scope.table, function (value, key) {
+				angular.forEach(value, function (value, key) {
+					if (value.fieldType === 'Date') {
+						value.value = new Date(Date.parse(value.value));
+					}
+				});
+			});
 
 			_.each(data.config, function (value, key) {
 				$scope.configs.push({
@@ -26,12 +34,6 @@ var TableController = function ($scope, $routeParams, JsonDB) {
 					value: value
 				});
 			});
-
-			$scope.initTab = function () {
-				angular.element('.menu .item').tab();
-			};
-
-			$scope.$parent.loading = false;
 		});
 	}
 

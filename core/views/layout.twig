@@ -5,63 +5,42 @@
     <base href="/">
     <link rel="stylesheet" href="{{ app.asset_path }}/css/style.css"/>
 </head>
-<body class="js-application" ng-controller="MainController">
-<header>
-    <div class="ui inverted segment">
-        <div class="ui inverted secondary pointing menu">
-            <div class="ui container">
-                <a href="/admin" class="header item">
-                    JsonDB
-                </a>
-                <a href="/admin/tables" class="item">Таблицы</a>
-            </div>
-            <div class="right menu">
-                <a href="/" target="_blank" class="ui item">
-                    На сайт
-                </a>
-                <a class="ui item">
-                    Выход
-                </a>
-            </div>
-        </div>
+<body ng-controller="MainController" ng-cloak>
+{#<div class="g-page-loader" ng-http-loader methods="GET" template="/core/views/loader.html"></div>#}
+<!-- Верхняя панель-->
+<md-toolbar md-theme="indigo" class="app-toolbar md-indigo-theme md-whiteframe-z2 fix-top">
+    <div class="md-toolbar-tools" tabindex="0">
+        <md-button class="menu-icon nornal-btn" ng-click="toggleRight()" aria-label="Toggle Menu">
+            <md-tooltip>
+                Меню
+            </md-tooltip>
+            <md-icon md-svg-icon="navigation:menu"></md-icon>
+        </md-button>
+        JsonDB
     </div>
-</header>
-<div class="g-messages"></div>
-<main role="main">
-    <div class="ui dimmer" ng-class="loading ? 'active' : ''">
-        <div class="ui text loader">Loading</div>
-    </div>
-    <div class="ui grid">
-        <div class="three wide column">
-            <h2 class="ui center aligned icon header">
-                <i class="circular table icon"></i>
-                Таблицы
-            </h2>
-
-            <div class="ui celled list" ng-controller="TablesController">
-                <div class="item" ng-repeat="table in tables">
-                    <i class="table icon"></i>
-
-                    <div class="content">
-                        <div class="header">
-                            <a href="/admin/tables/[[ table ]]">
-                                [[ table ]]
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="ui vertical divider"></div>
-        <div class="thirteen wide column">
+</md-toolbar>
+<div layout="row" class="main-layout">
+    <div flex>
+        <div ui-view>
             {% block body %}
             {% endblock %}
         </div>
     </div>
-</main>
-<footer>
-
-</footer>
+</div>
+<md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
+    <div ng-click="close()">
+        <md-toolbar md-theme="indigo">
+            <h1 class="md-toolbar-tools">Меню</h1>
+        </md-toolbar>
+        <md-content>
+            <a class="menu-item menu-sub-item md-menu-item" ng-click="menu.toggleSelectPage(page)"
+               ng-repeat="page in menu.pages" ui-sref="[[ page.state ]]"
+               md-ink-ripple="#bbb">
+                <span> [[ page.discription ]] </span>
+            </a>
+        </md-content>
+    </div>
+</md-sidenav>
 <script type="text/javascript" src="{{ app.asset_path }}/js/vendor.js"></script>
 <script type="text/javascript" src="{{ app.asset_path }}/js/app.js"></script>
 </body>
